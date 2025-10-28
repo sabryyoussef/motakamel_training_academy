@@ -1,0 +1,65 @@
+{
+  "name": "odoo-workflow-dashboard",
+  "version": "1.0.0",
+  "description": "Odoo Workflow Dashboard with Global Browser Console Capture",
+  "main": "index.js",
+  "scripts": {
+    "pretest:pw": "playwright install --with-deps || true",
+    "test:pw": "playwright test",
+    "test:pw:ui": "playwright test --ui",
+    "test:pw:headed": "playwright test --headed",
+    "test:pw:debug": "playwright test --debug",
+    "test:pw:base": "PW_BASE_URL=http://localhost:8018 playwright test",
+    "test:pw:odoo": "PW_BASE_URL=http://localhost:8018 playwright test tests/no-console-errors.spec.ts",
+    "dev:tap": "ts-node dev/console_tap_server.ts",
+    "dev:tap:prod": "CONSOLE_TAP_PORT=5055 CONSOLE_TAP_HOST=0.0.0.0 ts-node dev/console_tap_server.ts",
+    "build": "echo 'No build step required for Odoo'",
+    "start": "echo 'Start Odoo server manually'",
+    "debug:chrome": "echo 'Use VS Code debugger: Chrome: Launch & Attach (CDP)'",
+    "debug:edge": "echo 'Use VS Code debugger: Edge: Launch & Attach (CDP)'",
+    "debug:firefox": "echo 'Use VS Code debugger: Firefox: Launch (requires Firefox Debugger extension)'",
+    "debug:all": "echo 'Use VS Code debugger: Launch All (Chrome + Edge + Firefox)'",
+    "test:pw:chrome": "playwright test --project=chromium",
+    "test:pw:firefox": "playwright test --project=firefox",
+    "test:pw:webkit": "playwright test --project=webkit",
+    "dev:tap:watch": "nodemon --exec ts-node dev/console_tap_server.ts",
+    "build:tap": "tsc dev/console_tap_server.ts --outDir dist",
+    "start:tap": "node dist/console_tap_server.js",
+    "install:browsers": "playwright install",
+    "install:browsers:deps": "playwright install --with-deps",
+    "test:all": "npm run test:pw && npm run test:pw:chrome && npm run test:pw:firefox && npm run test:pw:webkit",
+    "clean": "rm -rf test-results playwright-report node_modules/.cache",
+    "setup": "npm install && npm run install:browsers:deps"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.40.0",
+    "@types/express": "^4.17.21",
+    "@types/node": "^20.10.0",
+    "body-parser": "^1.20.2",
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.3.0",
+    "@types/body-parser": "^1.19.5",
+    "@types/cors": "^2.8.17",
+    "nodemon": "^3.0.2"
+  },
+  "keywords": [
+    "odoo",
+    "workflow",
+    "dashboard",
+    "console",
+    "debugging",
+    "playwright",
+    "testing"
+  ],
+  "author": "Motakamel",
+  "license": "LGPL-3",
+  "engines": {
+    "node": ">=16.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "."
+  }
+}

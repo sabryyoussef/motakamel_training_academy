@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<templates>
+    
+    <!-- Workflow Navigation Template -->
+    <t t-name="motakamel_workflow_dashboard.WorkflowNavigation">
+        <div class="o_workflow_navigation">
+            <div class="o_breadcrumb"></div>
+            <div class="o_quick_actions"></div>
+            <div class="o_progress_tracking"></div>
+        </div>
+    </t>
+    
+    <!-- Workflow Diagram Template -->
+    <t t-name="motakamel_workflow_dashboard.WorkflowDiagram">
+        <div class="o_workflow_diagram_widget">
+            <div class="workflow_title"></div>
+            <div class="workflow_diagram"></div>
+        </div>
+    </t>
+    
+    <!-- Workflow Stage Template -->
+    <t t-name="motakamel_workflow_dashboard.WorkflowStage">
+        <div class="o_workflow_stage" t-att-class="record.stage_type.value">
+            <span class="stage_name"><t t-esc="record.name.value"/></span>
+            <span class="stage_count" t-if="record.record_count.value > 0">
+                (<t t-esc="record.record_count.value"/>)
+            </span>
+        </div>
+    </t>
+    
+    <!-- Workflow Analytics Template -->
+    <t t-name="motakamel_workflow_dashboard.WorkflowAnalytics">
+        <div class="o_workflow_analytics">
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="metric">
+                        <div class="metric_value"><t t-esc="record.total_stages.value"/></div>
+                        <div class="metric_label">Total Stages</div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="metric">
+                        <div class="metric_value"><t t-esc="record.completed_stages.value"/></div>
+                        <div class="metric_label">Completed</div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="metric">
+                        <div class="metric_value"><t t-esc="record.progress_percentage.value"/>%</div>
+                        <div class="metric_label">Progress</div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="metric">
+                        <div class="metric_value"><t t-esc="record.efficiency_score.value"/></div>
+                        <div class="metric_label">Efficiency</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </t>
+    
+    <!-- Workflow Hub Card Template -->
+    <t t-name="motakamel_workflow_dashboard.WorkflowHubCard">
+        <div class="o_workflow_card">
+            <div class="o_workflow_card_header">
+                <h3 class="o_workflow_card_title">
+                    <i t-att-class="record.icon.value" t-if="record.icon.value"></i>
+                    <t t-esc="record.name.value"/>
+                </h3>
+            </div>
+            <div class="o_workflow_card_content">
+                <p><t t-esc="record.description.value"/></p>
+                <div class="o_workflow_progress">
+                    <div class="o_workflow_progress_bar">
+                        <div class="o_workflow_progress_fill" 
+                             t-att-style="'width: ' + record.progress_percentage.value + '%'"></div>
+                    </div>
+                    <small class="text-muted">
+                        <t t-esc="record.progress_percentage.value"/>% Complete
+                    </small>
+                </div>
+                <div class="workflow_stages">
+                    <t t-foreach="record.stage_ids.value" t-as="stage" t-key="stage.id">
+                        <div class="o_workflow_stage">
+                            <t t-esc="stage.name"/>
+                        </div>
+                    </t>
+                </div>
+            </div>
+        </div>
+    </t>
+    
+</templates>

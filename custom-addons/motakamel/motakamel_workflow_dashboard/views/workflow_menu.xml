@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    
+    <!-- Main Workflow Dashboard Menu -->
+    <menuitem id="menu_workflow_dashboard_root"
+              name="Workflow Dashboard"
+              sequence="1"
+              web_icon="motakamel_workflow_dashboard,static/description/icon.png"/>
+
+    <!-- Workflow Hub Menu -->
+    <menuitem id="menu_workflow_hub"
+              name="Workflow Hub"
+              parent="menu_workflow_dashboard_root"
+              sequence="10"
+              action="action_workflow_hub"/>
+
+    <!-- Workflow Management Menu -->
+    <menuitem id="menu_workflow_management"
+              name="Workflow Management"
+              parent="menu_workflow_dashboard_root"
+              sequence="20"/>
+
+    <!-- Workflows Menu -->
+    <menuitem id="menu_workflows"
+              name="Workflows"
+              parent="menu_workflow_management"
+              sequence="10"
+              action="action_workflow_hub"/>
+
+    <!-- Workflow Stages Menu -->
+    <menuitem id="menu_workflow_stages"
+              name="Stages"
+              parent="menu_workflow_management"
+              sequence="20"
+              action="action_workflow_stages"/>
+
+    <!-- Workflow Transitions Menu -->
+    <menuitem id="menu_workflow_transitions"
+              name="Transitions"
+              parent="menu_workflow_management"
+              sequence="30"
+              action="action_workflow_transitions"/>
+
+    <!-- Workflow Analytics Menu -->
+    <menuitem id="menu_workflow_analytics"
+              name="Analytics"
+              parent="menu_workflow_management"
+              sequence="40"
+              action="action_workflow_analytics"/>
+
+    <!-- Actions for Menu Items -->
+    <record id="action_workflow_stages" model="ir.actions.act_window">
+        <field name="name">Workflow Stages</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">motakamel.workflow.stage</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="view_workflow_stage_tree"/>
+    </record>
+
+    <record id="action_workflow_transitions" model="ir.actions.act_window">
+        <field name="name">Workflow Transitions</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">motakamel.workflow.transition</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="view_workflow_transition_tree"/>
+    </record>
+
+    <record id="action_workflow_analytics" model="ir.actions.act_window">
+        <field name="name">Workflow Analytics</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">motakamel.workflow.analytics</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="view_workflow_analytics_tree"/>
+    </record>
+
+</odoo>

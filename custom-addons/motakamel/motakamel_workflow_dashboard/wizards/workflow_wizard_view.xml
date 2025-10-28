@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    
+    <!-- Workflow Setup Wizard Action -->
+    <record id="action_workflow_setup_wizard" model="ir.actions.act_window">
+        <field name="name">Workflow Setup Wizard</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">motakamel.workflow.setup.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <!-- Workflow Setup Wizard Form View -->
+    <record id="view_workflow_setup_wizard_form" model="ir.ui.view">
+        <field name="name">motakamel.workflow.setup.wizard.form</field>
+        <field name="model">motakamel.workflow.setup.wizard</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <div class="oe_title">
+                        <h1>Workflow Setup Wizard</h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="workflow_id"/>
+                            <field name="setup_type"/>
+                        </group>
+                    </group>
+                    
+                    <notebook>
+                        <page string="Basic Setup" invisible="setup_type != 'basic'">
+                            <group>
+                                <field name="auto_create_stages"/>
+                                <field name="auto_create_transitions"/>
+                                <field name="include_analytics"/>
+                            </group>
+                        </page>
+                        
+                        <page string="Advanced Setup" invisible="setup_type != 'advanced'">
+                            <group>
+                                <field name="user_group_ids"/>
+                                <field name="default_color"/>
+                            </group>
+                        </page>
+                        
+                        <page string="Custom Setup" invisible="setup_type != 'custom'">
+                            <group>
+                                <field name="custom_stages"/>
+                                <field name="custom_transitions"/>
+                            </group>
+                        </page>
+                    </notebook>
+                    
+                    <footer>
+                        <button name="action_setup_workflow" string="Setup Workflow" type="object" class="btn-primary"/>
+                        <button string="Cancel" class="btn-secondary" special="cancel"/>
+                    </footer>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+</odoo>

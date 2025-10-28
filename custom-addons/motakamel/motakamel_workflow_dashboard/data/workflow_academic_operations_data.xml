@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        
+        <!-- Academic Operations Workflow -->
+        <record id="workflow_academic_operations" model="motakamel.workflow">
+            <field name="name">Academic Operations</field>
+            <field name="description">Complete academic process from planning to results</field>
+            <field name="sequence">20</field>
+            <field name="color">#e67e22</field>
+            <field name="icon">motakamel_workflow_dashboard,static/description/academic-operations.png</field>
+        </record>
+
+        <!-- Academic Operations Stages -->
+        <record id="stage_planning" model="motakamel.workflow.stage">
+            <field name="name">Planning</field>
+            <field name="workflow_id" ref="workflow_academic_operations"/>
+            <field name="sequence">10</field>
+            <field name="description">Course and curriculum design</field>
+            <field name="color">#e74c3c</field>
+            <field name="module_xml_ids">openeducat_core.menu_op_school_config_course</field>
+        </record>
+
+        <record id="stage_scheduling" model="motakamel.workflow.stage">
+            <field name="name">Scheduling</field>
+            <field name="workflow_id" ref="workflow_academic_operations"/>
+            <field name="sequence">20</field>
+            <field name="description">Timetable creation and resource allocation</field>
+            <field name="color">#f39c12</field>
+            <field name="module_xml_ids">openeducat_timetable.menu_op_timetable_root</field>
+        </record>
+
+        <record id="stage_execution" model="motakamel.workflow.stage">
+            <field name="name">Execution</field>
+            <field name="workflow_id" ref="workflow_academic_operations"/>
+            <field name="sequence">30</field>
+            <field name="description">Class delivery and teaching</field>
+            <field name="color">#2ecc71</field>
+            <field name="module_xml_ids">openeducat_classroom.menu_op_classroom_root</field>
+        </record>
+
+        <record id="stage_assessment" model="motakamel.workflow.stage">
+            <field name="name">Assessment</field>
+            <field name="workflow_id" ref="workflow_academic_operations"/>
+            <field name="sequence">40</field>
+            <field name="description">Assignment and examination management</field>
+            <field name="color">#9b59b6</field>
+            <field name="module_xml_ids">openeducat_assignment.menu_op_assignment_root,openeducat_exam.menu_op_exam_root</field>
+        </record>
+
+        <record id="stage_results" model="motakamel.workflow.stage">
+            <field name="name">Results</field>
+            <field name="workflow_id" ref="workflow_academic_operations"/>
+            <field name="sequence">50</field>
+            <field name="description">Grading and performance tracking</field>
+            <field name="color">#1abc9c</field>
+            <field name="module_xml_ids">openeducat_exam.menu_op_exam_root</field>
+        </record>
+
+        <!-- Academic Operations Transitions -->
+        <record id="transition_planning_to_scheduling" model="motakamel.workflow.transition">
+            <field name="name">Create Schedule</field>
+            <field name="workflow_id" ref="workflow_academic_operations"/>
+            <field name="from_stage_id" ref="stage_planning"/>
+            <field name="to_stage_id" ref="stage_scheduling"/>
+            <field name="button_label">Create Timetable</field>
+            <field name="sequence">10</field>
+        </record>
+
+        <record id="transition_scheduling_to_execution" model="motakamel.workflow.transition">
+            <field name="name">Start Classes</field>
+            <field name="workflow_id" ref="workflow_academic_operations"/>
+            <field name="from_stage_id" ref="stage_scheduling"/>
+            <field name="to_stage_id" ref="stage_execution"/>
+            <field name="button_label">Begin Academic Year</field>
+            <field name="sequence">20</field>
+        </record>
+
+        <record id="transition_execution_to_assessment" model="motakamel.workflow.transition">
+            <field name="name">Start Assessment</field>
+            <field name="workflow_id" ref="workflow_academic_operations"/>
+            <field name="from_stage_id" ref="stage_execution"/>
+            <field name="to_stage_id" ref="stage_assessment"/>
+            <field name="button_label">Create Assignments</field>
+            <field name="sequence">30</field>
+        </record>
+
+        <record id="transition_assessment_to_results" model="motakamel.workflow.transition">
+            <field name="name">Generate Results</field>
+            <field name="workflow_id" ref="workflow_academic_operations"/>
+            <field name="from_stage_id" ref="stage_assessment"/>
+            <field name="to_stage_id" ref="stage_results"/>
+            <field name="button_label">Publish Results</field>
+            <field name="sequence">40</field>
+        </record>
+
+    </data>
+</odoo>

@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    
+    <!-- Workflow Hub Action -->
+    <record id="action_workflow_hub" model="ir.actions.act_window">
+        <field name="name">Workflow Dashboard Hub</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">motakamel.workflow</field>
+        <field name="view_mode">kanban,tree,form</field>
+        <field name="view_id" ref="view_workflow_hub_kanban"/>
+        <field name="context">{}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Welcome to Motakamel Workflow Dashboard!
+            </p>
+            <p>
+                This hub provides access to all educational workflows.
+                Click on any workflow card to explore its process flow.
+            </p>
+        </field>
+    </record>
+
+    <!-- Workflow Hub Kanban View -->
+    <record id="view_workflow_hub_kanban" model="ir.ui.view">
+        <field name="name">motakamel.workflow.hub.kanban</field>
+        <field name="model">motakamel.workflow</field>
+        <field name="arch" type="xml">
+            <kanban class="o_kanban_small_column">
+                <field name="name"/>
+                <field name="description"/>
+                <field name="icon"/>
+                <field name="color"/>
+                <field name="stage_count"/>
+                <field name="progress_percentage"/>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div class="oe_kanban_card oe_kanban_global_click" style="background-color: #f8f9fa;">
+                            <div class="o_kanban_card_header">
+                                <div class="o_kanban_card_header_title">
+                                    <div class="o_primary">
+                                        <strong><field name="name"/></strong>
+                                    </div>
+                                </div>
+                                <div class="o_dropdown_kanban dropdown">
+                                    <a class="dropdown-toggle o-no-caret btn" role="button" data-toggle="dropdown" href="#" aria-label="Dropdown menu" title="Dropdown menu">
+                                        <span class="fa fa-ellipsis-v"/>
+                                    </a>
+                                    <div class="dropdown-menu" role="menu">
+                                        <a role="menuitem" type="object" name="action_open_workflow_dashboard" class="dropdown-item">
+                                            <i class="fa fa-external-link"/> Open Dashboard
+                                        </a>
+                                        <a role="menuitem" type="object" name="action_view_stages" class="dropdown-item">
+                                            <i class="fa fa-list"/> View Stages
+                                        </a>
+                                        <a role="menuitem" type="object" name="action_view_analytics" class="dropdown-item">
+                                            <i class="fa fa-chart-bar"/> View Analytics
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="o_kanban_card_content">
+                                <div class="o_kanban_card_manage_pane">
+                                    <div class="o_kanban_card_manage_section o_kanban_manage_reports">
+                                        <div class="o_kanban_card_manage_title">
+                                            <field name="description"/>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="o_kanban_card_manage_pane">
+                                    <div class="o_kanban_card_manage_section o_kanban_manage_reports">
+                                        <div class="o_kanban_card_manage_title">
+                                            <span class="badge badge-info">
+                                                <i class="fa fa-list"/> <field name="stage_count"/> Stages
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="o_kanban_card_manage_pane">
+                                    <div class="o_kanban_card_manage_section o_kanban_manage_reports">
+                                        <div class="o_kanban_card_manage_title">
+                                            <div class="progress" style="height: 20px;">
+                                                <div class="progress-bar" role="progressbar" 
+                                                     t-att-style="'width: ' + record.progress_percentage.value + '%'"
+                                                     t-att-aria-valuenow="record.progress_percentage.value"
+                                                     aria-valuemin="0" aria-valuemax="100">
+                                                    <field name="progress_percentage"/>%
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="o_kanban_card_manage_pane">
+                                <div class="o_kanban_card_manage_section o_kanban_manage_reports">
+                                    <div class="o_kanban_card_manage_title">
+                                        <a role="button" type="object" name="action_open_workflow_dashboard" class="btn btn-primary btn-sm">
+                                            <i class="fa fa-external-link"/> Open Dashboard
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+</odoo>

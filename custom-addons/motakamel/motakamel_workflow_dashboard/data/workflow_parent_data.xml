@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        
+        <!-- Parent Communication Workflow -->
+        <record id="workflow_parent" model="motakamel.workflow">
+            <field name="name">Parent Communication</field>
+            <field name="description">Complete parent engagement process</field>
+            <field name="sequence">50</field>
+            <field name="color">#16a085</field>
+            <field name="icon">motakamel_workflow_dashboard,static/description/parent-communication.png</field>
+        </record>
+
+        <!-- Parent Communication Stages -->
+        <record id="stage_parent_registration" model="motakamel.workflow.stage">
+            <field name="name">Registration</field>
+            <field name="workflow_id" ref="workflow_parent"/>
+            <field name="sequence">10</field>
+            <field name="description">Parent account creation</field>
+            <field name="color">#e74c3c</field>
+            <field name="module_xml_ids">openeducat_parent.menu_op_parent_root</field>
+        </record>
+
+        <record id="stage_parent_linking" model="motakamel.workflow.stage">
+            <field name="name">Linking</field>
+            <field name="workflow_id" ref="workflow_parent"/>
+            <field name="sequence">20</field>
+            <field name="description">Parent-student relationship establishment</field>
+            <field name="color">#f39c12</field>
+            <field name="module_xml_ids">openeducat_parent.menu_op_parent_root</field>
+        </record>
+
+        <record id="stage_parent_tracking" model="motakamel.workflow.stage">
+            <field name="name">Tracking</field>
+            <field name="workflow_id" ref="workflow_parent"/>
+            <field name="sequence">30</field>
+            <field name="description">Student progress monitoring</field>
+            <field name="color">#2ecc71</field>
+            <field name="module_xml_ids">openeducat_attendance.menu_op_attendance_root</field>
+        </record>
+
+        <record id="stage_parent_communication" model="motakamel.workflow.stage">
+            <field name="name">Communication</field>
+            <field name="workflow_id" ref="workflow_parent"/>
+            <field name="sequence">40</field>
+            <field name="description">Ongoing parent-school communication</field>
+            <field name="color">#9b59b6</field>
+            <field name="module_xml_ids">openeducat_parent.menu_op_parent_root</field>
+        </record>
+
+        <!-- Parent Communication Transitions -->
+        <record id="transition_registration_to_linking" model="motakamel.workflow.transition">
+            <field name="name">Link Student</field>
+            <field name="workflow_id" ref="workflow_parent"/>
+            <field name="from_stage_id" ref="stage_parent_registration"/>
+            <field name="to_stage_id" ref="stage_parent_linking"/>
+            <field name="button_label">Link to Student</field>
+            <field name="sequence">10</field>
+        </record>
+
+        <record id="transition_linking_to_tracking" model="motakamel.workflow.transition">
+            <field name="name">Enable Tracking</field>
+            <field name="workflow_id" ref="workflow_parent"/>
+            <field name="from_stage_id" ref="stage_parent_linking"/>
+            <field name="to_stage_id" ref="stage_parent_tracking"/>
+            <field name="button_label">Start Monitoring</field>
+            <field name="sequence">20</field>
+        </record>
+
+        <record id="transition_tracking_to_communication" model="motakamel.workflow.transition">
+            <field name="name">Open Communication</field>
+            <field name="workflow_id" ref="workflow_parent"/>
+            <field name="from_stage_id" ref="stage_parent_tracking"/>
+            <field name="to_stage_id" ref="stage_parent_communication"/>
+            <field name="button_label">Enable Communication</field>
+            <field name="sequence">30</field>
+        </record>
+
+    </data>
+</odoo>

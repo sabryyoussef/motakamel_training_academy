@@ -1,0 +1,261 @@
+/* Motakamel Workflow Dashboard Styles */
+
+.o_workflow_dashboard {
+    background-color: #f8f9fa;
+    min-height: 100vh;
+}
+
+.o_workflow_hub {
+    padding: 20px;
+}
+
+.o_workflow_card {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    margin-bottom: 20px;
+    transition: transform 0.2s ease-in-out;
+}
+
+.o_workflow_card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+.o_workflow_card_header {
+    padding: 15px 20px;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.o_workflow_card_title {
+    font-size: 18px;
+    font-weight: 600;
+    color: #2c3e50;
+    margin: 0;
+}
+
+.o_workflow_card_content {
+    padding: 20px;
+}
+
+.o_workflow_progress {
+    margin: 15px 0;
+}
+
+.o_workflow_progress_bar {
+    height: 8px;
+    border-radius: 4px;
+    background-color: #e9ecef;
+    overflow: hidden;
+}
+
+.o_workflow_progress_fill {
+    height: 100%;
+    background: linear-gradient(90deg, #3498db, #2ecc71);
+    transition: width 0.3s ease;
+}
+
+.o_workflow_stage {
+    display: inline-block;
+    margin: 5px;
+    padding: 8px 16px;
+    background-color: #3498db;
+    color: white;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.o_workflow_stage.inquiry { background-color: #e74c3c; }
+.o_workflow_stage.admission { background-color: #f39c12; }
+.o_workflow_stage.registration { background-color: #2ecc71; }
+.o_workflow_stage.enrollment { background-color: #9b59b6; }
+.o_workflow_stage.academic_progress { background-color: #1abc9c; }
+.o_workflow_stage.graduation { background-color: #34495e; }
+
+.o_workflow_diagram_widget {
+    background: white;
+    border-radius: 8px;
+    padding: 20px;
+    margin: 20px 0;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.o_workflow_diagram_widget svg {
+    width: 100%;
+    height: auto;
+}
+
+.o_workflow_diagram_widget .stage circle {
+    transition: all 0.3s ease;
+}
+
+.o_workflow_diagram_widget .stage circle:hover {
+    r: 35;
+    stroke-width: 4;
+}
+
+.o_workflow_diagram_widget .transition {
+    transition: stroke-width 0.3s ease;
+}
+
+.o_workflow_diagram_widget .transition:hover {
+    stroke-width: 4;
+}
+
+.o_workflow_navigation {
+    background: white;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.o_breadcrumb {
+    margin-bottom: 15px;
+}
+
+.o_quick_actions {
+    margin-bottom: 15px;
+}
+
+.o_quick_actions .btn {
+    margin-right: 10px;
+}
+
+.o_progress_tracking {
+    margin-top: 15px;
+}
+
+.o_workflow_analytics {
+    background: white;
+    border-radius: 8px;
+    padding: 20px;
+    margin: 20px 0;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.o_workflow_analytics .metric {
+    text-align: center;
+    padding: 15px;
+}
+
+.o_workflow_analytics .metric_value {
+    font-size: 24px;
+    font-weight: bold;
+    color: #3498db;
+}
+
+.o_workflow_analytics .metric_label {
+    font-size: 12px;
+    color: #7f8c8d;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.o_workflow_kanban {
+    background: #f8f9fa;
+    padding: 20px;
+}
+
+.o_workflow_kanban .oe_kanban_card {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    margin-bottom: 20px;
+}
+
+.o_workflow_kanban .oe_kanban_card_header {
+    padding: 15px 20px;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.o_workflow_kanban .oe_kanban_card_content {
+    padding: 20px;
+}
+
+.o_workflow_kanban .badge {
+    font-size: 11px;
+    padding: 4px 8px;
+}
+
+.o_workflow_kanban .progress {
+    height: 20px;
+    background-color: #e9ecef;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.o_workflow_kanban .progress-bar {
+    background: linear-gradient(90deg, #3498db, #2ecc71);
+    border-radius: 10px;
+    transition: width 0.3s ease;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .o_workflow_hub {
+        padding: 10px;
+    }
+    
+    .o_workflow_card {
+        margin-bottom: 15px;
+    }
+    
+    .o_workflow_card_content {
+        padding: 15px;
+    }
+    
+    .o_workflow_stage {
+        font-size: 11px;
+        padding: 6px 12px;
+    }
+    
+    .o_workflow_diagram_widget {
+        padding: 15px;
+    }
+}
+
+/* Dark Mode Support */
+@media (prefers-color-scheme: dark) {
+    .o_workflow_dashboard {
+        background-color: #1a1a1a;
+        color: #ffffff;
+    }
+    
+    .o_workflow_card {
+        background: #2d2d2d;
+        color: #ffffff;
+    }
+    
+    .o_workflow_card_header {
+        border-bottom-color: #404040;
+    }
+    
+    .o_workflow_card_title {
+        color: #ffffff;
+    }
+    
+    .o_workflow_navigation {
+        background: #2d2d2d;
+        color: #ffffff;
+    }
+    
+    .o_workflow_analytics {
+        background: #2d2d2d;
+        color: #ffffff;
+    }
+    
+    .o_workflow_kanban {
+        background: #1a1a1a;
+    }
+    
+    .o_workflow_kanban .oe_kanban_card {
+        background: #2d2d2d;
+        color: #ffffff;
+    }
+    
+    .o_workflow_kanban .oe_kanban_card_header {
+        border-bottom-color: #404040;
+    }
+}

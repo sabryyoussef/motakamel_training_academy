@@ -1,0 +1,299 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    
+    <!-- Workflow Tree View -->
+    <record id="view_workflow_tree" model="ir.ui.view">
+        <field name="name">motakamel.workflow.tree</field>
+        <field name="model">motakamel.workflow</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="description"/>
+                <field name="stage_count"/>
+                <field name="progress_percentage"/>
+                <field name="color"/>
+                <field name="active"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Workflow Form View -->
+    <record id="view_workflow_form" model="ir.ui.view">
+        <field name="name">motakamel.workflow.form</field>
+        <field name="model">motakamel.workflow</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_open_workflow_dashboard" type="object" class="oe_stat_button" icon="fa-external-link">
+                            <field name="stage_count" widget="statinfo" string="Stages"/>
+                        </button>
+                        <button name="action_view_stages" type="object" class="oe_stat_button" icon="fa-list">
+                            <field name="stage_count" widget="statinfo" string="View Stages"/>
+                        </button>
+                        <button name="action_view_analytics" type="object" class="oe_stat_button" icon="fa-chart-bar">
+                            <field name="progress_percentage" widget="statinfo" string="Analytics"/>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="sequence"/>
+                            <field name="color"/>
+                            <field name="active"/>
+                        </group>
+                        <group>
+                            <field name="stage_count"/>
+                            <field name="progress_percentage"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="description"/>
+                    </group>
+                    <group>
+                        <field name="icon"/>
+                    </group>
+                    <notebook>
+                        <page string="Stages">
+                            <field name="stage_ids">
+                                <tree editable="bottom">
+                                    <field name="name"/>
+                                    <field name="sequence"/>
+                                    <field name="description"/>
+                                    <field name="color"/>
+                                    <field name="record_count"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Transitions">
+                            <field name="transition_ids">
+                                <tree editable="bottom">
+                                    <field name="name"/>
+                                    <field name="from_stage_id"/>
+                                    <field name="to_stage_id"/>
+                                    <field name="button_label"/>
+                                    <field name="sequence"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Analytics">
+                            <field name="analytics_ids">
+                                <tree>
+                                    <field name="stage_id"/>
+                                    <field name="record_count"/>
+                                    <field name="avg_duration"/>
+                                    <field name="efficiency_score"/>
+                                    <field name="trend"/>
+                                    <field name="last_updated"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Workflow Stage Tree View -->
+    <record id="view_workflow_stage_tree" model="ir.ui.view">
+        <field name="name">motakamel.workflow.stage.tree</field>
+        <field name="model">motakamel.workflow.stage</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="workflow_id"/>
+                <field name="sequence"/>
+                <field name="record_count"/>
+                <field name="transition_count"/>
+                <field name="active"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Workflow Stage Form View -->
+    <record id="view_workflow_stage_form" model="ir.ui.view">
+        <field name="name">motakamel.workflow.stage.form</field>
+        <field name="model">motakamel.workflow.stage</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_open_stage_modules" type="object" class="oe_stat_button" icon="fa-external-link">
+                            <field name="record_count" widget="statinfo" string="Open Modules"/>
+                        </button>
+                        <button name="action_open_stage_actions" type="object" class="oe_stat_button" icon="fa-cogs">
+                            <field name="transition_count" widget="statinfo" string="Actions"/>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="workflow_id"/>
+                            <field name="sequence"/>
+                            <field name="color"/>
+                            <field name="active"/>
+                        </group>
+                        <group>
+                            <field name="record_count"/>
+                            <field name="transition_count"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="description"/>
+                    </group>
+                    <group>
+                        <field name="icon"/>
+                        <field name="module_xml_ids"/>
+                        <field name="action_xml_ids"/>
+                    </group>
+                    <group>
+                        <field name="required_fields"/>
+                    </group>
+                    <notebook>
+                        <page string="Next Stages">
+                            <field name="next_stage_ids">
+                                <tree editable="bottom">
+                                    <field name="name"/>
+                                    <field name="sequence"/>
+                                    <field name="description"/>
+                                    <field name="color"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Workflow Transition Tree View -->
+    <record id="view_workflow_transition_tree" model="ir.ui.view">
+        <field name="name">motakamel.workflow.transition.tree</field>
+        <field name="model">motakamel.workflow.transition</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="workflow_id"/>
+                <field name="from_stage_id"/>
+                <field name="to_stage_id"/>
+                <field name="button_label"/>
+                <field name="transition_type"/>
+                <field name="active"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Workflow Transition Form View -->
+    <record id="view_workflow_transition_form" model="ir.ui.view">
+        <field name="name">motakamel.workflow.transition.form</field>
+        <field name="model">motakamel.workflow.transition</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_execute_transition" type="object" class="oe_stat_button" icon="fa-play">
+                            <field name="transition_type" widget="statinfo" string="Execute"/>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="workflow_id"/>
+                            <field name="sequence"/>
+                            <field name="active"/>
+                        </group>
+                        <group>
+                            <field name="transition_type"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="from_stage_id"/>
+                        <field name="to_stage_id"/>
+                    </group>
+                    <group>
+                        <field name="button_label"/>
+                        <field name="action_xml_id"/>
+                    </group>
+                    <group>
+                        <field name="condition"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Workflow Analytics Tree View -->
+    <record id="view_workflow_analytics_tree" model="ir.ui.view">
+        <field name="name">motakamel.workflow.analytics.tree</field>
+        <field name="model">motakamel.workflow.analytics</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="workflow_id"/>
+                <field name="stage_id"/>
+                <field name="record_count"/>
+                <field name="avg_duration"/>
+                <field name="efficiency_score"/>
+                <field name="trend"/>
+                <field name="last_updated"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Workflow Analytics Form View -->
+    <record id="view_workflow_analytics_form" model="ir.ui.view">
+        <field name="name">motakamel.workflow.analytics.form</field>
+        <field name="model">motakamel.workflow.analytics</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_refresh_analytics" type="object" class="oe_stat_button" icon="fa-refresh">
+                            <field name="record_count" widget="statinfo" string="Refresh"/>
+                        </button>
+                        <button name="action_view_records" type="object" class="oe_stat_button" icon="fa-list">
+                            <field name="record_count" widget="statinfo" string="View Records"/>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="workflow_id"/> - <field name="stage_id"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="workflow_id"/>
+                            <field name="stage_id"/>
+                        </group>
+                        <group>
+                            <field name="record_count"/>
+                            <field name="avg_duration"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="efficiency_score"/>
+                        <field name="trend"/>
+                    </group>
+                    <group>
+                        <field name="last_updated"/>
+                    </group>
+                    <group>
+                        <field name="bottlenecks"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+</odoo>
