@@ -1,0 +1,65 @@
+<div class="o_form_help_content">
+    <div class="alert alert-info">
+        <h4><i class="fa fa-info-circle"/> Form Purpose</h4>
+        <p>The Result Template form is used to generate and manage exam results for students in specific exam sessions. This form allows you to create result templates, link them to exam sessions, and generate final results with grades or marks based on your evaluation type.</p>
+    </div>
+    
+    <h4><i class="fa fa-list-ol"/> Step-by-Step Instructions</h4>
+    <ol class="help-steps">
+        <li><strong>Create New Result Template:</strong> Click "Create" to add a new result template.</li>
+        <li><strong>Enter Template Name:</strong> Provide a descriptive name for this result template (e.g., "Midterm Exam Results 2025").</li>
+        <li><strong>Select Exam Session:</strong> Choose the exam session for which results will be generated. This links the template to a specific exam session.</li>
+        <li><strong>Set Result Date:</strong> Enter the date when results are finalized or published.</li>
+        <li><strong>Choose Evaluation Type:</strong> Select the evaluation method - either "grade" (letter grades like A, B, C) or "marks" (numerical scores).</li>
+        <li><strong>Configure Grades (if applicable):</strong> If you selected "grade" evaluation type, the Grades section will appear. Add grade entries that define the letter grades and their corresponding mark ranges (e.g., A: 85-100, B: 75-84, etc.).</li>
+        <li><strong>Generate Results:</strong> Once all information is entered, click the "Generate Result" button in the header. This processes all student data from the linked exam session and creates result records.</li>
+        <li><strong>Review Status:</strong> The status bar shows "Draft" before generation and "Result Generated" after successful processing. You can view the generated results from the related exam session.</li>
+    </ol>
+    
+    <h4><i class="fa fa-asterisk"/> Required Fields</h4>
+    <ul class="help-required-fields">
+        <li><strong>Name:</strong> A descriptive name for the result template</li>
+        <li><strong>Exam Session:</strong> The exam session this template applies to</li>
+        <li><strong>Result Date:</strong> The date results are finalized</li>
+        <li><strong>Evaluation Type:</strong> Either "grade" or "marks" evaluation method</li>
+        <li><strong>Grades (if grade type):</strong> Grade definitions with mark ranges when evaluation type is "grade"</li>
+    </ul>
+    
+    <h4><i class="fa fa-lightbulb-o"/> Tips & Best Practices</h4>
+    <ul class="help-tips">
+        <li>Use clear, descriptive names that include the exam type and academic year (e.g., "Final Exam Results Fall 2025").</li>
+        <li>Ensure the exam session has completed and all exam attendee records are finalized before generating results.</li>
+        <li>Set the result date to the actual date when results will be published to students.</li>
+        <li>For grade-based evaluation, ensure your grade configuration is properly set up in Grade Configuration before defining grade ranges here.</li>
+        <li>Review all generated results after clicking "Generate Result" to verify accuracy.</li>
+        <li>Use the archive feature (ribbon widget) to mark templates as inactive without deleting historical data.</li>
+    </ul>
+    
+    <h4><i class="fa fa-exclamation-triangle"/> Common Errors</h4>
+    <ul class="help-errors">
+        <li><strong>Error:</strong> Cannot generate result - no exam attendees found<br/><strong>Solution:</strong> Ensure the selected exam session has exam attendees registered. Complete the exam session setup first.</li>
+        <li><strong>Error:</strong> Missing grades when evaluation type is "grade"<br/><strong>Solution:</strong> Add grade entries in the Grades section by clicking the "Add a line" button and defining grade ranges.</li>
+        <li><strong>Error:</strong> Cannot modify after generating results<br/><strong>Solution:</strong> Result templates cannot be edited after generation. Create a new template if changes are needed.</li>
+        <li><strong>Error:</strong> Date validation error<br/><strong>Solution:</strong> Ensure the result date is set to today or a future date, and matches your academic calendar.</li>
+    </ul>
+    
+    <h4><i class="fa fa-check-circle"/> Expected Results</h4>
+    <p>After successfully generating results:</p>
+    <ul class="help-tips">
+        <li>The status changes from "Draft" to "Result Generated"</li>
+        <li>Result records are created for all students in the linked exam session</li>
+        <li>Grades or marks are assigned based on the evaluation type and configuration</li>
+        <li>Results can be viewed in the related Result Lines or through the exam session</li>
+        <li>Students can access their results through the portal (if configured)</li>
+    </ul>
+    
+    <h4><i class="fa fa-info-circle"/> Additional Information</h4>
+    <p><strong>Evaluation Types:</strong></p>
+    <ul class="help-tips">
+        <li><strong>Grade:</strong> Uses letter grades (A+, A, B, etc.) based on predefined grade ranges</li>
+        <li><strong>Marks:</strong> Uses numerical scores directly from exam performance</li>
+    </ul>
+    <p><strong>Workflow:</strong> The result template follows a two-state workflow - Draft for preparation and Result Generated after processing. Once generated, the template cannot be modified.</p>
+    <p><strong>Integration:</strong> Results generated here are linked to student records, exam sessions, and can be used to generate transcripts, report cards, and academic reports.</p>
+</div>
+
