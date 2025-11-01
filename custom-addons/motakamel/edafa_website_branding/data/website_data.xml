@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <data noupdate="1">
-        
-        <!-- Update website name and branding -->
-        <record id="website_1" model="website">
-            <field name="name">Edafa Education Platform</field>
-            <field name="domain">localhost:8028</field>
-        </record>
-        
-    </data>
+    
+    <!-- Update website name and branding -->
+    <record id="website.default_website" model="website">
+        <field name="name">Edafa Education Platform</field>
+        <field name="logo" type="base64" file="edafa_website_branding/static/src/img/edafa_logo.svg"/>
+    </record>
+    
 </odoo>

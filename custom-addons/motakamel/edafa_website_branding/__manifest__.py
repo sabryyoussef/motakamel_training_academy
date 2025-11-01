@@ -19,26 +19,37 @@
 ###############################################################################
 
 {
-    'name': 'Edafa Website Branding',
+    'name': 'Edafa Website Portal',
     'version': '18.0.1.0',
     'license': 'LGPL-3',
     'category': 'Website',
     'sequence': 1,
-    'summary': 'Edafa branding for website logo and favicon',
+    'summary': 'Edafa website branding and student admission portal',
     'complexity': "easy",
     'author': 'Edafa Inc',
     'website': 'https://www.edafa.org',
     'depends': [
         'base',
         'website',
+        'portal',
+        'openeducat_core',
+        'openeducat_admission',
     ],
     'data': [
+        'security/ir.model.access.csv',
         'data/website_data.xml',
+        'data/website_menu.xml',
+        'views/admission_portal_templates.xml',
+        'views/admission_thank_you_template.xml',
+        'views/my_applications_template.xml',
     ],
     'demo': [],
-    'css': [],
-    'qweb': [],
-    'js': [],
+    'assets': {
+        'web.assets_frontend': [
+            'edafa_website_branding/static/src/css/admission_portal.css',
+            'edafa_website_branding/static/src/js/admission_form.js',
+        ],
+    },
     'images': [
         'static/description/icon.png',
     ],

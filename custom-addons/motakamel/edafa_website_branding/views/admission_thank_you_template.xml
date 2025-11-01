@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    
+    <!-- Thank You Page After Submission -->
+    <template id="admission_thank_you" name="Admission Thank You">
+        <t t-call="website.layout">
+            <div id="wrap" class="oe_structure">
+                <section class="pt96 pb96 bg-light">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-lg-8 offset-lg-2 text-center">
+                                <div class="card shadow-lg">
+                                    <div class="card-body p-5">
+                                        <div class="mb-4">
+                                            <i class="fa fa-check-circle fa-5x text-success"></i>
+                                        </div>
+                                        <h1 class="text-success mb-3">Application Submitted Successfully!</h1>
+                                        <p class="lead">Thank you for applying to Edafa Education Platform.</p>
+                                        
+                                        <div class="alert alert-info my-4">
+                                            <h4>Your Application Number</h4>
+                                            <h2 class="mb-0"><strong><t t-esc="application_number"/></strong></h2>
+                                            <p class="mb-0 mt-2">Please save this number for future reference</p>
+                                        </div>
+                                        
+                                        <div class="text-left my-4">
+                                            <h5>What happens next?</h5>
+                                            <ol>
+                                                <li>You will receive a confirmation email shortly</li>
+                                                <li>Our admissions team will review your application</li>
+                                                <li>We will contact you within 3-5 business days</li>
+                                                <li>You can check your application status anytime using your application number</li>
+                                            </ol>
+                                        </div>
+                                        
+                                        <div class="mt-4">
+                                            <a href="/admission/check-status" class="btn btn-primary btn-lg mr-2">
+                                                <i class="fa fa-search"></i> Check Application Status
+                                            </a>
+                                            <a href="/" class="btn btn-secondary btn-lg">
+                                                <i class="fa fa-home"></i> Go to Homepage
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </t>
+    </template>
+
+</odoo>
+
