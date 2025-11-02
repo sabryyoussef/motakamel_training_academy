@@ -20,7 +20,7 @@
 
 {
     'name': 'Edafa Website Portal',
-    'version': '18.0.1.0',
+    'version': '18.0.1.1',
     'license': 'LGPL-3',
     'category': 'Website',
     'sequence': 1,
@@ -45,6 +45,7 @@
     ],
     'demo': [],
     'assets': {
+        # Frontend assets (loaded on website/portal pages)
         'web.assets_frontend': [
             'edafa_website_branding/static/src/css/admission_portal.css',
             'edafa_website_branding/static/src/js/admission_form.js',
