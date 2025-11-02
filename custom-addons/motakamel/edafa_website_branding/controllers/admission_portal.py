@@ -47,8 +47,8 @@ class EdafaAdmissionPortal(http.Controller):
             'last_name': 'Mohamed',
             'email': 'ahmed.hassan@example.com',
             'birth_date': '2000-01-15',
-            'mobile': '+201234567890',
-            'phone': '0233914986',
+            'mobile': '+966 59 921 4084',
+            'phone': '+966 59 921 4084',
             'gender': 'm',  # Default gender for demo
             'street': '123 Tahrir Street',
             'street2': 'Apt 5B',
@@ -144,29 +144,51 @@ class EdafaAdmissionPortal(http.Controller):
                 return request.redirect('/admission/apply')
             
             # Prepare admission data
+            # NOTE: Don't pass False for Many2one fields - just omit them if empty
             admission_vals = {
                 'register_id': register.id,  # Required field
                 'name': f"{post.get('first_name', '')} {post.get('last_name', '')}".strip() or 'Student',
                 'first_name': post.get('first_name', 'Ahmed'),
                 'middle_name': post.get('middle_name', 'Hassan'),
                 'last_name': post.get('last_name', 'Mohamed'),
-                'title': int(post.get('title')) if post.get('title') and post.get('title') != '' else False,
                 'email': post.get('email', 'test@example.com'),
-                'mobile': post.get('mobile', '+201234567890'),
+                'mobile': post.get('mobile', '+966 59 921 4084'),
                 'phone': post.get('phone', ''),
                 'birth_date': post.get('birth_date') or '2000-01-15',
                 'gender': post.get('gender') or 'm',  # Required field - default to male if not provided
                 'course_id': course_id,  # Always set to a valid course
-                'batch_id': int(post.get('batch_id')) if post.get('batch_id') and post.get('batch_id') != '' else False,
                 'street': post.get('street', ''),
                 'street2': post.get('street2', ''),
                 'city': post.get('city', ''),
                 'zip': post.get('zip', ''),
-                'state_id': int(post.get('state_id')) if post.get('state_id') and post.get('state_id') != '' else False,
-                'country_id': int(post.get('country_id')) if post.get('country_id') and post.get('country_id') != '' else False,
                 'application_date': fields.Datetime.now(),
                 'state': 'submit',  # Auto-submit the application
             }
+            
+            # Only add Many2one fields if they have valid values
+            if post.get('title') and post.get('title') != '':
+                try:
+                    admission_vals['title'] = int(post.get('title'))
+                except (ValueError, TypeError):
+                    pass
+            
+            if post.get('batch_id') and post.get('batch_id') != '':
+                try:
+                    admission_vals['batch_id'] = int(post.get('batch_id'))
+                except (ValueError, TypeError):
+                    pass
+            
+            if post.get('state_id') and post.get('state_id') != '':
+                try:
+                    admission_vals['state_id'] = int(post.get('state_id'))
+                except (ValueError, TypeError):
+                    pass
+            
+            if post.get('country_id') and post.get('country_id') != '':
+                try:
+                    admission_vals['country_id'] = int(post.get('country_id'))
+                except (ValueError, TypeError):
+                    pass
             
             _logger.info(f"DEBUG: Creating admission with course_id: {course_id}")
             

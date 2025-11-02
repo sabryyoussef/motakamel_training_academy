@@ -19,10 +19,13 @@
 ##############################################################################
 
 from datetime import datetime
+import logging
 
 from dateutil.relativedelta import relativedelta
 from odoo import _, api, fields, models
 from odoo.exceptions import UserError, ValidationError
+
+_logger = logging.getLogger(__name__)
 
 
 class OpAdmission(models.Model):
@@ -147,26 +150,30 @@ class OpAdmission(models.Model):
 
     @api.onchange('student_id', 'is_student')
     def onchange_student(self):
+        _logger.info("DEBUG: onchange_student called - UPDATED VERSION with .browse()")
         if self.is_student and self.student_id:
             sd = self.student_id
-            self.title = sd.title or False
+            # Assign Many2one fields properly - never use False
+            self.title = sd.title if sd.title else self.env['res.partner.title'].browse()
             self.first_name = sd.first_name
             self.middle_name = sd.middle_name
             self.last_name = sd.last_name
             self.birth_date = sd.birth_date
             self.gender = sd.gender
-            self.image = sd.image_1920 or False
-            self.street = sd.street or False
-            self.street2 = sd.street2 or False
-            self.phone = sd.phone or False
-            self.mobile = sd.mobile or False
-            self.email = sd.email or False
-            self.zip = sd.zip or False
-            self.city = sd.city or False
-            self.country_id = sd.country_id or False
-            self.state_id = sd.state_id or False
-            self.partner_id = sd.partner_id or False
+            self.image = sd.image_1920 if sd.image_1920 else False
+            self.street = sd.street if sd.street else False
+            self.street2 = sd.street2 if sd.street2 else False
+            self.phone = sd.phone if sd.phone else False
+            self.mobile = sd.mobile if sd.mobile else False
+            self.email = sd.email if sd.email else False
+            self.zip = sd.zip if sd.zip else False
+            self.city = sd.city if sd.city else False
+            self.country_id = sd.country_id if sd.country_id else self.env['res.country'].browse()
+            self.state_id = sd.state_id if sd.state_id else self.env['res.country.state'].browse()
+            self.partner_id = sd.partner_id if sd.partner_id else self.env['res.partner'].browse()
         else:
+            # Clear all fields - use browse() for Many2one fields
+            self.title = self.env['res.partner.title'].browse()
             self.birth_date = False
             self.gender = False
             self.image = False
@@ -176,12 +183,9 @@ class OpAdmission(models.Model):
             self.mobile = False
             self.zip = False
             self.city = False
-            if self.country_id:
-                self.country_id = False
-            if self.state_id:
-                self.state_id = False
-            if self.partner_id:
-                self.partner_id = False
+            self.country_id = self.env['res.country'].browse()
+            self.state_id = self.env['res.country.state'].browse()
+            self.partner_id = self.env['res.partner'].browse()
 
     @api.onchange('register_id')
     def onchange_register(self):
@@ -198,19 +202,18 @@ class OpAdmission(models.Model):
         else:
             if self.register_id.program_id:
                 self.program_id = self.register_id.program_id
+            else:
+                self.program_id = self.env['op.program'].browse()
 
     @api.onchange('course_id')
     def onchange_course(self):
         # Always clear batch when course changes
-        if self.batch_id:
-            self.batch_id = False
+        self.batch_id = self.env['op.batch'].browse()
         
         if not self.course_id:
             # If no course selected, clear related fields
-            if self.fees_term_id:
-                self.fees_term_id = False
-            if self.program_id:
-                self.program_id = False
+            self.fees_term_id = self.env['op.fees.terms'].browse()
+            self.program_id = self.env['op.program'].browse()
             return
         
         # Handle fees based on admission type
@@ -223,14 +226,14 @@ class OpAdmission(models.Model):
         # Set program_id from course
         if self.course_id.program_id:
             self.program_id = self.course_id.program_id
-        elif self.program_id:
-            self.program_id = False
+        else:
+            self.program_id = self.env['op.program'].browse()
         
         # Set fees_term_id from course
         if self.course_id.fees_term_id:
             self.fees_term_id = self.course_id.fees_term_id
-        elif self.fees_term_id:
-            self.fees_term_id = False
+        else:
+            self.fees_term_id = self.env['op.fees.terms'].browse()
 
     @api.constrains('register_id', 'application_date')
     def _check_admission_register(self):
