@@ -4,42 +4,7 @@
 import { jsonrpc } from "@web/core/network/rpc_service";
 import publicWidget from "@web/legacy/js/public/public_widget";
 
-// Global function to clear demo data (empties fields rather than resetting to defaults)
-window.clearDemoData = function () {
-    if (!confirm('Are you sure you want to clear all demo data?')) {
-        return;
-    }
-    const form = document.getElementById('admissionForm');
-    if (!form) return;
-
-    const elements = form.querySelectorAll('input, select, textarea');
-    elements.forEach((el) => {
-        // keep csrf token
-        if (el.name === 'csrf_token') return;
-
-        if (el.tagName === 'SELECT') {
-            el.selectedIndex = 0;
-            return;
-        }
-        switch (el.type) {
-            case 'checkbox':
-            case 'radio':
-                el.checked = false;
-                break;
-            case 'file':
-                el.value = '';
-                break;
-            default:
-                el.value = '';
-        }
-    });
-
-    // Clear state options back to placeholder if present
-    const stateSelect = form.querySelector('select[name="state_id"]');
-    if (stateSelect) {
-        stateSelect.innerHTML = '<option value="">Select State...</option>';
-    }
-};
+// Note: clearDemoData function is defined inline in the template for immediate availability
 
 publicWidget.registry.AdmissionForm = publicWidget.Widget.extend({
     selector: '.admission-form',
