@@ -1,12 +1,93 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     
+    <!-- Workflow Hub Kanban View - Must be defined before action -->
+    <record id="view_workflow_hub_kanban" model="ir.ui.view">
+        <field name="name">motakamel.workflow.hub.kanban</field>
+        <field name="model">motakamel.workflow</field>
+        <field name="arch" type="xml">
+            <kanban class="o_workflow_kanban">
+                <field name="name"/>
+                <field name="description"/>
+                <field name="icon"/>
+                <field name="color"/>
+                <field name="stage_count"/>
+                <field name="progress_percentage"/>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div t-attf-class="o_workflow_card oe_kanban_global_click" 
+                             t-attf-style="--card-color: {{record.color.value}}; --card-color-light: {{record.color.value}}88;">
+                            <div class="o_workflow_card_header" style="display: flex; justify-content: space-between; align-items: center;">
+                                <h3 class="o_workflow_card_title">
+                                    <i class="fa fa-sitemap me-2" t-attf-style="color: {{record.color.value}};"></i>
+                                    <field name="name"/>
+                                </h3>
+                                <div class="o_dropdown_kanban dropdown">
+                                    <a class="dropdown-toggle o-no-caret btn" role="button" data-toggle="dropdown" href="#" aria-label="Dropdown menu" title="Dropdown menu">
+                                        <span class="fa fa-ellipsis-v" style="color: #95a5a6;"/>
+                                    </a>
+                                    <div class="dropdown-menu" role="menu">
+                                        <a role="menuitem" type="object" name="action_open_workflow_dashboard" class="dropdown-item">
+                                            <i class="fa fa-external-link text-primary"/> Open Dashboard
+                                        </a>
+                                        <a role="menuitem" type="object" name="action_view_stages" class="dropdown-item">
+                                            <i class="fa fa-list text-success"/> View Stages
+                                        </a>
+                                        <a role="menuitem" type="object" name="action_view_analytics" class="dropdown-item">
+                                            <i class="fa fa-chart-bar text-info"/> View Analytics
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="o_workflow_card_content">
+                                <div class="o_workflow_progress mb-3">
+                                    <p style="margin-bottom: 12px; color: #5a6c7d; font-size: 14px; line-height: 1.6;">
+                                        <i class="fa fa-info-circle me-1" t-attf-style="color: {{record.color.value}};"></i>
+                                        <field name="description"/>
+                                    </p>
+                                </div>
+                                <div class="o_workflow_progress mb-3">
+                                    <span class="badge">
+                                        <i class="fa fa-layer-group me-1"/> <field name="stage_count"/> Stages
+                                    </span>
+                                </div>
+                                <div class="o_workflow_progress mb-3">
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <span style="font-size: 12px; color: #7f8c8d; font-weight: 600;">Progress</span>
+                                        <span style="font-size: 14px; font-weight: 700;" t-attf-style="color: {{record.color.value}};">
+                                            <field name="progress_percentage"/>%
+                                        </span>
+                                    </div>
+                                    <div class="o_workflow_progress_bar">
+                                        <div class="o_workflow_progress_fill" 
+                                             t-attf-style="width: {{record.progress_percentage.value}}%"
+                                             role="progressbar" 
+                                             t-att-aria-valuenow="record.progress_percentage.value"
+                                             aria-valuemin="0" aria-valuemax="100">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div style="margin-top: 20px; text-align: center;">
+                                    <a role="button" type="object" name="action_open_workflow_dashboard" 
+                                       class="btn btn-sm"
+                                       t-attf-style="background: linear-gradient(135deg, {{record.color.value}} 0%, {{record.color.value}}cc 100%); color: white; border: none; padding: 10px 24px; border-radius: 25px; font-weight: 600; box-shadow: 0 4px 12px {{record.color.value}}40;">
+                                        <i class="fa fa-rocket me-2"/> Open Dashboard
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
     <!-- Workflow Hub Action -->
     <record id="action_workflow_hub" model="ir.actions.act_window">
         <field name="name">Workflow Dashboard Hub</field>
         <field name="type">ir.actions.act_window</field>
         <field name="res_model">motakamel.workflow</field>
-        <field name="view_mode">kanban,tree,form</field>
+        <field name="view_mode">kanban,list,form</field>
         <field name="view_id" ref="view_workflow_hub_kanban"/>
         <field name="context">{}</field>
         <field name="help" type="html">
@@ -17,92 +98,6 @@
                 This hub provides access to all educational workflows.
                 Click on any workflow card to explore its process flow.
             </p>
-        </field>
-    </record>
-
-    <!-- Workflow Hub Kanban View -->
-    <record id="view_workflow_hub_kanban" model="ir.ui.view">
-        <field name="name">motakamel.workflow.hub.kanban</field>
-        <field name="model">motakamel.workflow</field>
-        <field name="arch" type="xml">
-            <kanban class="o_kanban_small_column">
-                <field name="name"/>
-                <field name="description"/>
-                <field name="icon"/>
-                <field name="color"/>
-                <field name="stage_count"/>
-                <field name="progress_percentage"/>
-                <templates>
-                    <t t-name="kanban-box">
-                        <div class="oe_kanban_card oe_kanban_global_click" style="background-color: #f8f9fa;">
-                            <div class="o_kanban_card_header">
-                                <div class="o_kanban_card_header_title">
-                                    <div class="o_primary">
-                                        <strong><field name="name"/></strong>
-                                    </div>
-                                </div>
-                                <div class="o_dropdown_kanban dropdown">
-                                    <a class="dropdown-toggle o-no-caret btn" role="button" data-toggle="dropdown" href="#" aria-label="Dropdown menu" title="Dropdown menu">
-                                        <span class="fa fa-ellipsis-v"/>
-                                    </a>
-                                    <div class="dropdown-menu" role="menu">
-                                        <a role="menuitem" type="object" name="action_open_workflow_dashboard" class="dropdown-item">
-                                            <i class="fa fa-external-link"/> Open Dashboard
-                                        </a>
-                                        <a role="menuitem" type="object" name="action_view_stages" class="dropdown-item">
-                                            <i class="fa fa-list"/> View Stages
-                                        </a>
-                                        <a role="menuitem" type="object" name="action_view_analytics" class="dropdown-item">
-                                            <i class="fa fa-chart-bar"/> View Analytics
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="o_kanban_card_content">
-                                <div class="o_kanban_card_manage_pane">
-                                    <div class="o_kanban_card_manage_section o_kanban_manage_reports">
-                                        <div class="o_kanban_card_manage_title">
-                                            <field name="description"/>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="o_kanban_card_manage_pane">
-                                    <div class="o_kanban_card_manage_section o_kanban_manage_reports">
-                                        <div class="o_kanban_card_manage_title">
-                                            <span class="badge badge-info">
-                                                <i class="fa fa-list"/> <field name="stage_count"/> Stages
-                                            </span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="o_kanban_card_manage_pane">
-                                    <div class="o_kanban_card_manage_section o_kanban_manage_reports">
-                                        <div class="o_kanban_card_manage_title">
-                                            <div class="progress" style="height: 20px;">
-                                                <div class="progress-bar" role="progressbar" 
-                                                     t-att-style="'width: ' + record.progress_percentage.value + '%'"
-                                                     t-att-aria-valuenow="record.progress_percentage.value"
-                                                     aria-valuemin="0" aria-valuemax="100">
-                                                    <field name="progress_percentage"/>%
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="o_kanban_card_manage_pane">
-                                <div class="o_kanban_card_manage_section o_kanban_manage_reports">
-                                    <div class="o_kanban_card_manage_title">
-                                        <a role="button" type="object" name="action_open_workflow_dashboard" class="btn btn-primary btn-sm">
-                                            <i class="fa fa-external-link"/> Open Dashboard
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </t>
-                </templates>
-            </kanban>
         </field>
     </record>
 
