@@ -47,7 +47,9 @@
         'views/admission_thank_you_template.xml',
         'views/my_applications_template.xml',
     ],
-    'demo': [],
+    'demo': [
+        'data/demo_data.xml',
+    ],
     'assets': {
         # Frontend assets (loaded on website/portal pages)
         'web.assets_frontend': [

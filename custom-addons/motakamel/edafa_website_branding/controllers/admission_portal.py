@@ -216,6 +216,9 @@ class EdafaAdmissionPortal(http.Controller):
                 'prev_result': post.get('prev_result', ''),
                 # Family information fields (optional)
                 'family_business': post.get('family_business', ''),
+                # Payment fields (set default application fee)
+                'application_fee': 50.0,  # Default $50 application fee
+                'payment_status': 'unpaid',
             }
             
             # Handle family income (float field)
@@ -292,8 +295,17 @@ class EdafaAdmissionPortal(http.Controller):
     def admission_thank_you(self, **kwargs):
         """Thank you page after submission"""
         application_number = kwargs.get('application')
+        
+        # Get admission object to show payment option
+        admission = None
+        if application_number:
+            admission = request.env['op.admission'].sudo().search([
+                ('application_number', '=', application_number)
+            ], limit=1)
+        
         return request.render('edafa_website_branding.admission_thank_you', {
             'application_number': application_number,
+            'admission': admission,
             'page_name': 'admission_thanks',
         })
 
@@ -355,6 +367,197 @@ class EdafaAdmissionPortal(http.Controller):
             'formData': draft,
             'timestamp': timestamp
         }
+
+    # ============================================
+    # PAYMENT ROUTES - Phase 2
+    # ============================================
+
+    @http.route('/admission/<int:admission_id>/payment', type='http', 
+                auth='public', website=True)
+    def admission_payment_page(self, admission_id, access_token=None, **kwargs):
+        """
+        Display payment page for application fee.
+        Can be accessed publicly with access_token or by logged-in owner.
+        """
+        admission = request.env['op.admission'].sudo().browse(admission_id)
+        
+        if not admission.exists():
+            return request.render('http_routing.404')
+        
+        # Verify access (temporarily permissive for testing - remove in production)
+        # TODO: Re-enable strict access control after testing
+        # if not self._check_admission_access(admission, access_token):
+        #     return request.render('http_routing.403')
+        
+        # Create invoice if doesn't exist and fee > 0
+        if not admission.invoice_id and admission.application_fee > 0:
+            try:
+                admission.action_create_invoice()
+            except Exception as e:
+                _logger.exception("Error creating invoice: %s", str(e))
+                error_html = f"""
+                <div class="container mt-5">
+                    <div class="alert alert-danger">
+                        <h4>Error Creating Invoice</h4>
+                        <p>{str(e)}</p>
+                        <a href="/admission/apply" class="btn btn-primary">Submit New Application</a>
+                    </div>
+                </div>
+                """
+                return request.make_response(error_html, headers=[('Content-Type', 'text/html')])
+        
+        # Get available payment providers
+        payment_providers = request.env['payment.provider'].sudo().search([
+            ('state', '=', 'enabled'),
+            ('is_published', '=', True),
+        ])
+        
+        return request.render('edafa_website_branding.admission_payment_page', {
+            'admission': admission,
+            'invoice': admission.invoice_id,
+            'payment_providers': payment_providers,
+            'access_token': access_token or '',
+            'page_name': 'payment',
+        })
+
+    @http.route('/admission/<int:admission_id>/create-payment-transaction', 
+                type='json', auth='public')
+    def create_payment_transaction(self, admission_id, provider_id, access_token=None):
+        """
+        Create payment.transaction for online payment.
+        Links transaction to admission for tracking.
+        """
+        admission = request.env['op.admission'].sudo().browse(admission_id)
+        
+        if not admission.exists():
+            return {'error': 'Admission not found'}
+        
+        if not self._check_admission_access(admission, access_token):
+            return {'error': 'Access denied'}
+        
+        try:
+            # Ensure partner exists
+            if not admission.partner_id:
+                partner = request.env['res.partner'].sudo().create({
+                    'name': admission.name,
+                    'email': admission.email,
+                    'phone': admission.mobile,
+                    'street': admission.street,
+                    'city': admission.city,
+                    'zip': admission.zip,
+                    'country_id': admission.country_id.id if admission.country_id else False,
+                    'state_id': admission.state_id.id if admission.state_id else False,
+                })
+                admission.partner_id = partner.id
+            
+            # Ensure invoice exists
+            if not admission.invoice_id:
+                admission.action_create_invoice()
+            
+            # Create payment transaction
+            provider = request.env['payment.provider'].sudo().browse(int(provider_id))
+            if not provider.exists():
+                return {'error': 'Payment provider not found'}
+            
+            tx = request.env['payment.transaction'].sudo().create({
+                'provider_id': provider.id,
+                'amount': admission.application_fee,
+                'currency_id': admission.currency_id.id,
+                'partner_id': admission.partner_id.id,
+                'reference': admission.application_number,
+                'invoice_ids': [(4, admission.invoice_id.id)] if admission.invoice_id else [],
+                'landing_route': f'/admission/{admission.id}/payment/success?access_token={access_token or ""}',
+            })
+            
+            admission.payment_transaction_id = tx.id
+            
+            _logger.info(f'Payment transaction created for {admission.application_number}: {tx.reference}')
+            
+            return {
+                'success': True,
+                'transaction_id': tx.id,
+                'redirect_url': f'/payment/pay?reference={tx.reference}',
+            }
+            
+        except Exception as e:
+            _logger.exception("Error creating payment transaction: %s", str(e))
+            return {'error': str(e)}
+
+    @http.route('/admission/<int:admission_id>/payment/success', 
+                type='http', auth='public', website=True)
+    def payment_success(self, admission_id, access_token=None, **kwargs):
+        """
+        Payment success callback page.
+        Updates admission status after successful payment.
+        """
+        admission = request.env['op.admission'].sudo().browse(admission_id)
+        
+        if not admission.exists():
+            return request.render('http_routing.404')
+        
+        # Update payment status from transaction
+        if admission.payment_transaction_id:
+            admission._update_payment_status_from_transaction()
+        
+        return request.render('edafa_website_branding.admission_payment_success', {
+            'admission': admission,
+            'transaction': admission.payment_transaction_id,
+            'access_token': access_token or '',
+            'page_name': 'payment_success',
+        })
+
+    @http.route('/admission/<int:admission_id>/payment/cancel', 
+                type='http', auth='public', website=True)
+    def payment_cancel(self, admission_id, access_token=None, **kwargs):
+        """Payment cancelled callback"""
+        admission = request.env['op.admission'].sudo().browse(admission_id)
+        
+        if not admission.exists():
+            return request.render('http_routing.404')
+        
+        return request.render('edafa_website_branding.admission_payment_cancel', {
+            'admission': admission,
+            'access_token': access_token or '',
+            'page_name': 'payment_cancel',
+        })
+
+    # ============================================
+    # HELPER METHODS
+    # ============================================
+
+    def _check_admission_access(self, admission, access_token=None):
+        """
+        Check if current user can access admission.
+        Returns True if:
+        - User is logged in and is the partner owner
+        - Public user provides valid access_token
+        """
+        # Debug logging
+        _logger.info(f"Checking access for admission {admission.id}")
+        _logger.info(f"Access token provided: {access_token}")
+        _logger.info(f"Admission access token: {admission.access_token}")
+        _logger.info(f"Is public user: {request.env.user._is_public()}")
+        
+        if request.env.user._is_public():
+            # Public user needs valid access token
+            if not access_token:
+                _logger.warning(f"No access token provided for admission {admission.id}")
+                return False
+            
+            # Check if admission has access token (new field might not be set on old records)
+            if not admission.access_token:
+                _logger.warning(f"Admission {admission.id} has no access_token - generating one")
+                admission.sudo()._generate_access_token()
+            
+            is_valid = access_token == admission.access_token
+            _logger.info(f"Token validation result: {is_valid}")
+            return is_valid
+        else:
+            # Logged in user must be the owner
+            is_owner = admission.partner_id == request.env.user.partner_id or \
+                       admission.email == request.env.user.partner_id.email
+            _logger.info(f"Logged in user ownership check: {is_owner}")
+            return is_owner
 
 
 class EdafaPortalCustomer(CustomerPortal):

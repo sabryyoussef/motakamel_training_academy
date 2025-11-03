@@ -404,5 +404,493 @@
         </t>
     </template>
 
+    <!-- Admission Payment Page Template -->
+    <template id="admission_payment_page" name="Admission Payment Page">
+        <t t-call="website.layout">
+            <div id="wrap" class="oe_structure">
+                <section class="s_text_block pt32 pb32" style="background-color: #f8f9fa;">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-lg-8 offset-lg-2">
+                                <!-- Payment Header -->
+                                <div class="card shadow-sm mb-4">
+                                    <div class="card-header bg-primary text-white">
+                                        <h3 class="mb-0">
+                                            <i class="fa fa-credit-card mr-2"></i>
+                                            Application Fee Payment
+                                        </h3>
+                                    </div>
+                                    <div class="card-body">
+                                        <!-- Application Details -->
+                                        <div class="row mb-4">
+                                            <div class="col-md-6">
+                                                <h5>Application Details</h5>
+                                                <table class="table table-sm table-borderless">
+                                                    <tr>
+                                                        <th>Application Number:</th>
+                                                        <td><strong t-esc="admission.application_number"/></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>Applicant Name:</th>
+                                                        <td t-esc="admission.name"/>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>Email:</th>
+                                                        <td t-esc="admission.email"/>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>Status:</th>
+                                                        <td>
+                                                            <span t-if="admission.state == 'draft'" class="badge badge-secondary">Draft</span>
+                                                            <span t-if="admission.state == 'submit'" class="badge badge-info">Submitted</span>
+                                                            <span t-if="admission.state == 'confirm'" class="badge badge-success">Confirmed</span>
+                                                            <span t-if="admission.state == 'cancel'" class="badge badge-danger">Cancelled</span>
+                                                            <span t-if="admission.state == 'reject'" class="badge badge-warning">Rejected</span>
+                                                        </td>
+                                                    </tr>
+                                                </table>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <h5>Payment Information</h5>
+                                                <table class="table table-sm table-borderless">
+                                                    <tr>
+                                                        <th>Application Fee:</th>
+                                                        <td><strong class="text-primary" style="font-size: 1.5em;" t-esc="'$%.2f' % admission.application_fee"/></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>Payment Status:</th>
+                                                        <td>
+                                                            <span t-if="admission.payment_status == 'unpaid'" class="badge badge-warning">Unpaid</span>
+                                                            <span t-if="admission.payment_status == 'pending'" class="badge badge-info">Pending</span>
+                                                            <span t-if="admission.payment_status == 'paid'" class="badge badge-success">Paid</span>
+                                                            <span t-if="admission.payment_status == 'refunded'" class="badge badge-secondary">Refunded</span>
+                                                        </td>
+                                                    </tr>
+                                                    <tr t-if="admission.invoice_id">
+                                                        <th>Invoice Number:</th>
+                                                        <td t-esc="admission.invoice_id.name"/>
+                                                    </tr>
+                                                </table>
+                                            </div>
+                                        </div>
+
+                                        <hr/>
+
+                                        <!-- Payment Status Messages -->
+                                        <div t-if="admission.payment_status == 'paid'" class="alert alert-success" role="alert">
+                                            <h4 class="alert-heading">
+                                                <i class="fa fa-check-circle mr-2"></i>
+                                                Payment Completed!
+                                            </h4>
+                                            <p>Thank you! Your application fee has been successfully paid.</p>
+                                            <p class="mb-0">You will receive a confirmation email shortly.</p>
+                                        </div>
+
+                                        <div t-if="admission.payment_status == 'pending'" class="alert alert-info" role="alert">
+                                            <h4 class="alert-heading">
+                                                <i class="fa fa-clock-o mr-2"></i>
+                                                Payment Pending
+                                            </h4>
+                                            <p class="mb-0">Your payment is being processed. Please wait...</p>
+                                        </div>
+
+                                        <!-- Payment Form (only show if unpaid) -->
+                                        <div t-if="admission.payment_status == 'unpaid' and admission.application_fee > 0" class="mt-4">
+                                            <h5 class="mb-3">Select Payment Method</h5>
+                                            
+                                            <!-- Payment Provider Buttons -->
+                                            <t t-if="payment_providers">
+                                                <div class="row">
+                                                    <t t-foreach="payment_providers" t-as="provider">
+                                                        <div class="col-md-6 mb-3">
+                                                            <a t-attf-href="/admission/#{admission.id}/create-payment-transaction?provider_id=#{provider.id}&amp;access_token=#{access_token}" 
+                                                               class="btn btn-outline-primary btn-lg btn-block py-3">
+                                                                <i t-if="provider.code == 'stripe'" class="fa fa-cc-stripe fa-2x mb-2"></i>
+                                                                <i t-if="provider.code == 'paypal'" class="fa fa-cc-paypal fa-2x mb-2"></i>
+                                                                <i t-if="provider.code not in ['stripe', 'paypal']" class="fa fa-credit-card fa-2x mb-2"></i>
+                                                                <br/>
+                                                                <span t-esc="provider.name"/>
+                                                            </a>
+                                                        </div>
+                                                    </t>
+                                                </div>
+                                            </t>
+                                            
+                                            <!-- No providers message -->
+                                            <t t-if="not payment_providers">
+                                                <div class="alert alert-warning" role="alert">
+                                                    <h5 class="alert-heading">
+                                                        <i class="fa fa-exclamation-triangle mr-2"></i>
+                                                        Payment Providers Not Configured
+                                                    </h5>
+                                                    <p>No payment providers are currently available.</p>
+                                                    <p class="mb-0">Please contact the administrator or try again later.</p>
+                                                </div>
+                                            </t>
+                                        </div>
+
+                                        <!-- Already Paid Message -->
+                                        <div t-if="admission.application_fee == 0" class="alert alert-info" role="alert">
+                                            <i class="fa fa-info-circle mr-2"></i>
+                                            No application fee is required for this admission.
+                                        </div>
+
+                                        <!-- Navigation Buttons -->
+                                        <div class="mt-4 text-center">
+                                            <a href="/admission/apply" class="btn btn-secondary">
+                                                <i class="fa fa-arrow-left mr-2"></i>
+                                                Back to Application Form
+                                            </a>
+                                            <a href="/" class="btn btn-outline-secondary ml-2">
+                                                <i class="fa fa-home mr-2"></i>
+                                                Home
+                                            </a>
+                                            <t t-if="admission.invoice_id">
+                                                <a t-attf-href="/my/invoices/#{admission.invoice_id.id}?access_token=#{admission.invoice_id.access_token}" 
+                                                   class="btn btn-outline-primary ml-2" target="_blank">
+                                                    <i class="fa fa-file-pdf-o mr-2"></i>
+                                                    View Invoice
+                                                </a>
+                                            </t>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Help Section -->
+                                <div class="card shadow-sm">
+                                    <div class="card-body">
+                                        <h5>
+                                            <i class="fa fa-question-circle mr-2"></i>
+                                            Need Help?
+                                        </h5>
+                                        <p class="mb-2">If you encounter any issues with payment, please contact:</p>
+                                        <ul class="list-unstyled">
+                                            <li><i class="fa fa-envelope mr-2"></i>Email: admissions@example.com</li>
+                                            <li><i class="fa fa-phone mr-2"></i>Phone: +1-234-567-8900</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </t>
+    </template>
+
+    <!-- Payment Success Page Template -->
+    <template id="admission_payment_success" name="Payment Success">
+        <t t-call="website.layout">
+            <div id="wrap" class="oe_structure">
+                <section class="s_text_block pt96 pb96" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-lg-6 offset-lg-3 text-center">
+                                <div class="card shadow-lg border-0">
+                                    <div class="card-body p-5">
+                                        <!-- Success Icon -->
+                                        <div class="mb-4">
+                                            <div class="success-checkmark">
+                                                <div class="check-icon">
+                                                    <span class="icon-line line-tip"></span>
+                                                    <span class="icon-line line-long"></span>
+                                                    <div class="icon-circle"></div>
+                                                    <div class="icon-fix"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <h1 class="text-success mb-3">
+                                            <i class="fa fa-check-circle fa-3x mb-3"></i>
+                                            <br/>
+                                            Payment Successful!
+                                        </h1>
+                                        
+                                        <p class="lead mb-4">
+                                            Thank you for your payment. Your application fee has been received.
+                                        </p>
+
+                                        <!-- Transaction Details -->
+                                        <div class="card bg-light mb-4">
+                                            <div class="card-body">
+                                                <h5 class="card-title mb-3">Transaction Details</h5>
+                                                <table class="table table-sm table-borderless mb-0">
+                                                    <tr>
+                                                        <th class="text-left">Application Number:</th>
+                                                        <td class="text-right"><strong t-esc="admission.application_number"/></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th class="text-left">Applicant Name:</th>
+                                                        <td class="text-right" t-esc="admission.name"/>
+                                                    </tr>
+                                                    <tr>
+                                                        <th class="text-left">Amount Paid:</th>
+                                                        <td class="text-right text-success">
+                                                            <strong t-esc="'$%.2f' % admission.application_fee"/>
+                                                        </td>
+                                                    </tr>
+                                                    <tr t-if="transaction">
+                                                        <th class="text-left">Transaction ID:</th>
+                                                        <td class="text-right">
+                                                            <small class="text-muted" t-esc="transaction.reference"/>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th class="text-left">Payment Date:</th>
+                                                        <td class="text-right" t-esc="datetime.datetime.now().strftime('%B %d, %Y at %I:%M %p')"/>
+                                                    </tr>
+                                                </table>
+                                            </div>
+                                        </div>
+
+                                        <!-- Next Steps -->
+                                        <div class="alert alert-info text-left" role="alert">
+                                            <h6 class="alert-heading">
+                                                <i class="fa fa-info-circle mr-2"></i>
+                                                What happens next?
+                                            </h6>
+                                            <ul class="mb-0 pl-3">
+                                                <li>A confirmation email will be sent to <strong t-esc="admission.email"/></li>
+                                                <li>Your application will be reviewed by our admissions team</li>
+                                                <li>You will receive an update within 5-7 business days</li>
+                                                <li>You can check your application status anytime</li>
+                                            </ul>
+                                        </div>
+
+                                        <!-- Action Buttons -->
+                                        <div class="mt-4">
+                                            <a href="/" class="btn btn-primary btn-lg mr-2">
+                                                <i class="fa fa-home mr-2"></i>
+                                                Back to Home
+                                            </a>
+                                            <t t-if="admission.invoice_id">
+                                                <a t-attf-href="/my/invoices/#{admission.invoice_id.id}?access_token=#{admission.invoice_id.access_token}" 
+                                                   class="btn btn-outline-primary btn-lg" target="_blank">
+                                                    <i class="fa fa-download mr-2"></i>
+                                                    Download Receipt
+                                                </a>
+                                            </t>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+            
+            <!-- Success Animation CSS -->
+            <style>
+                .success-checkmark {
+                    width: 80px;
+                    height: 80px;
+                    margin: 0 auto;
+                }
+                .success-checkmark .check-icon {
+                    width: 80px;
+                    height: 80px;
+                    position: relative;
+                    border-radius: 50%;
+                    box-sizing: content-box;
+                    border: 4px solid #4CAF50;
+                }
+                .success-checkmark .check-icon::before {
+                    top: 3px;
+                    left: -2px;
+                    width: 30px;
+                    transform-origin: 100% 50%;
+                    border-radius: 100px 0 0 100px;
+                }
+                .success-checkmark .check-icon::after {
+                    top: 0;
+                    left: 30px;
+                    width: 60px;
+                    transform-origin: 0 50%;
+                    border-radius: 0 100px 100px 0;
+                    animation: rotate-circle 4.25s ease-in;
+                }
+                .success-checkmark .check-icon::before, .success-checkmark .check-icon::after {
+                    content: '';
+                    height: 100px;
+                    position: absolute;
+                    background: #FFFFFF;
+                    transform: rotate(-45deg);
+                }
+                .success-checkmark .check-icon .icon-line {
+                    height: 5px;
+                    background-color: #4CAF50;
+                    display: block;
+                    border-radius: 2px;
+                    position: absolute;
+                    z-index: 10;
+                }
+                .success-checkmark .check-icon .icon-line.line-tip {
+                    top: 46px;
+                    left: 14px;
+                    width: 25px;
+                    transform: rotate(45deg);
+                    animation: icon-line-tip 0.75s;
+                }
+                .success-checkmark .check-icon .icon-line.line-long {
+                    top: 38px;
+                    right: 8px;
+                    width: 47px;
+                    transform: rotate(-45deg);
+                    animation: icon-line-long 0.75s;
+                }
+                .success-checkmark .check-icon .icon-circle {
+                    top: -4px;
+                    left: -4px;
+                    z-index: 10;
+                    width: 80px;
+                    height: 80px;
+                    border-radius: 50%;
+                    position: absolute;
+                    box-sizing: content-box;
+                    border: 4px solid rgba(76, 175, 80, .5);
+                }
+                .success-checkmark .check-icon .icon-fix {
+                    top: 8px;
+                    width: 5px;
+                    left: 26px;
+                    z-index: 1;
+                    height: 85px;
+                    position: absolute;
+                    transform: rotate(-45deg);
+                    background-color: #FFFFFF;
+                }
+                @keyframes icon-line-tip {
+                    0% { width: 0; left: 1px; top: 19px; }
+                    54% { width: 0; left: 1px; top: 19px; }
+                    70% { width: 50px; left: -8px; top: 37px; }
+                    84% { width: 17px; left: 21px; top: 48px; }
+                    100% { width: 25px; left: 14px; top: 45px; }
+                }
+                @keyframes icon-line-long {
+                    0% { width: 0; right: 46px; top: 54px; }
+                    65% { width: 0; right: 46px; top: 54px; }
+                    84% { width: 55px; right: 0px; top: 35px; }
+                    100% { width: 47px; right: 8px; top: 38px; }
+                }
+            </style>
+        </t>
+    </template>
+
+    <!-- Payment Cancel/Failed Page Template -->
+    <template id="admission_payment_cancel" name="Payment Cancelled">
+        <t t-call="website.layout">
+            <div id="wrap" class="oe_structure">
+                <section class="s_text_block pt96 pb96" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-lg-6 offset-lg-3 text-center">
+                                <div class="card shadow-lg border-0">
+                                    <div class="card-body p-5">
+                                        <!-- Cancel Icon -->
+                                        <i class="fa fa-times-circle fa-5x text-danger mb-4"></i>
+                                        
+                                        <h1 class="text-danger mb-3">
+                                            Payment Cancelled
+                                        </h1>
+                                        
+                                        <p class="lead mb-4">
+                                            Your payment was not completed. No charges have been made.
+                                        </p>
+
+                                        <!-- Application Details -->
+                                        <div class="card bg-light mb-4">
+                                            <div class="card-body">
+                                                <h5 class="card-title mb-3">Application Details</h5>
+                                                <table class="table table-sm table-borderless mb-0">
+                                                    <tr>
+                                                        <th class="text-left">Application Number:</th>
+                                                        <td class="text-right"><strong t-esc="admission.application_number"/></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th class="text-left">Applicant Name:</th>
+                                                        <td class="text-right" t-esc="admission.name"/>
+                                                    </tr>
+                                                    <tr>
+                                                        <th class="text-left">Amount Due:</th>
+                                                        <td class="text-right text-warning">
+                                                            <strong t-esc="'$%.2f' % admission.application_fee"/>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th class="text-left">Payment Status:</th>
+                                                        <td class="text-right">
+                                                            <span class="badge badge-warning">Unpaid</span>
+                                                        </td>
+                                                    </tr>
+                                                </table>
+                                            </div>
+                                        </div>
+
+                                        <!-- Information Alert -->
+                                        <div class="alert alert-warning text-left" role="alert">
+                                            <h6 class="alert-heading">
+                                                <i class="fa fa-exclamation-triangle mr-2"></i>
+                                                Why did this happen?
+                                            </h6>
+                                            <p class="mb-2">Common reasons for payment cancellation:</p>
+                                            <ul class="mb-0 pl-3">
+                                                <li>You clicked the "Cancel" button</li>
+                                                <li>Browser back button was pressed</li>
+                                                <li>Payment window was closed</li>
+                                                <li>Session timeout</li>
+                                            </ul>
+                                        </div>
+
+                                        <!-- Next Steps -->
+                                        <div class="alert alert-info text-left" role="alert">
+                                            <h6 class="alert-heading">
+                                                <i class="fa fa-info-circle mr-2"></i>
+                                                What can you do?
+                                            </h6>
+                                            <ul class="mb-0 pl-3">
+                                                <li>Try the payment again with the same or different payment method</li>
+                                                <li>Check your card details and try again</li>
+                                                <li>Contact us if you need assistance</li>
+                                                <li>Your application is saved and waiting for payment</li>
+                                            </ul>
+                                        </div>
+
+                                        <!-- Action Buttons -->
+                                        <div class="mt-4">
+                                            <a t-attf-href="/admission/#{admission.id}/payment?access_token=#{access_token}" 
+                                               class="btn btn-success btn-lg mr-2">
+                                                <i class="fa fa-credit-card mr-2"></i>
+                                                Try Payment Again
+                                            </a>
+                                            <a href="/" class="btn btn-outline-secondary btn-lg">
+                                                <i class="fa fa-home mr-2"></i>
+                                                Back to Home
+                                            </a>
+                                        </div>
+
+                                        <!-- Help Section -->
+                                        <div class="mt-4 pt-4 border-top">
+                                            <p class="text-muted mb-2">
+                                                <i class="fa fa-question-circle mr-2"></i>
+                                                Need help with payment?
+                                            </p>
+                                            <p class="mb-0">
+                                                <i class="fa fa-envelope mr-2"></i>
+                                                <a href="mailto:admissions@example.com">admissions@example.com</a>
+                                                <br/>
+                                                <i class="fa fa-phone mr-2"></i>
+                                                +1-234-567-8900
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </t>
+    </template>
+
 </odoo>
 
