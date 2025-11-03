@@ -78,6 +78,47 @@ class EdafaAdmissionPortal(http.Controller):
             'page_name': 'admission',
         })
 
+    @http.route(['/admission/wizard'], type='http', auth="public", website=True, sitemap=True)
+    def admission_wizard(self, **kwargs):
+        """Multi-step wizard application form (Phase 1 Enhancement)"""
+        # Get available courses, batches, programs
+        courses = request.env['op.course'].sudo().search([])
+        batches = request.env['op.batch'].sudo().search([])
+        programs = request.env['op.program'].sudo().search([])
+        countries = request.env['res.country'].sudo().search([])
+        titles = request.env['res.partner.title'].sudo().search([])
+        
+        # Demo data for testing
+        default = {
+            'first_name': 'Ahmed',
+            'middle_name': 'Hassan',
+            'last_name': 'Mohamed',
+            'email': 'ahmed.hassan@example.com',
+            'birth_date': '2000-01-15',
+            'mobile': '+966 59 921 4084',
+            'phone': '+966 59 921 4084',
+            'gender': 'm',
+            'street': '123 Tahrir Street',
+            'street2': 'Apt 5B',
+            'city': 'Cairo',
+            'zip': '11511',
+            'prev_institute_id': 'Cairo Secondary School',
+            'prev_course_id': 'High School Diploma',
+            'prev_result': '85%',
+            'family_business': 'Self-employed',
+            'family_income': '50000',
+        }
+        
+        return request.render('edafa_website_branding.admission_application_wizard', {
+            'courses': courses,
+            'batches': batches,
+            'programs': programs,
+            'countries': countries,
+            'titles': titles,
+            'default': default,
+            'page_name': 'admission_wizard',
+        })
+
     @http.route('/admission/submit', type='http', auth="public", website=True, methods=['POST'], csrf=True)
     def admission_submit(self, **post):
         """Handle admission form submission"""
@@ -281,6 +322,40 @@ class EdafaAdmissionPortal(http.Controller):
             'email': email,
             'page_name': 'admission_status',
         })
+
+
+    @http.route('/admission/check-email', type='json', auth='public', csrf=False)
+    def check_email(self, email):
+        """Check if email already has an active application"""
+        exists = request.env['op.admission'].sudo().search_count([
+            ('email', '=', email),
+            ('state', 'not in', ['cancel', 'reject'])
+        ]) > 0
+        return {'exists': exists}
+
+    @http.route('/admission/save-draft', type='json', auth='public')
+    def save_draft(self, **data):
+        """Save application draft to session"""
+        try:
+            request.session['admission_draft'] = data
+            request.session['admission_draft_timestamp'] = fields.Datetime.now().isoformat()
+            return {
+                'status': 'saved',
+                'timestamp': request.session['admission_draft_timestamp']
+            }
+        except Exception as e:
+            _logger.exception("Error saving draft: %s", str(e))
+            return {'status': 'error', 'message': str(e)}
+
+    @http.route('/admission/load-draft', type='json', auth='public')
+    def load_draft(self):
+        """Load saved application draft from session"""
+        draft = request.session.get('admission_draft', {})
+        timestamp = request.session.get('admission_draft_timestamp', '')
+        return {
+            'formData': draft,
+            'timestamp': timestamp
+        }
 
 
 class EdafaPortalCustomer(CustomerPortal):

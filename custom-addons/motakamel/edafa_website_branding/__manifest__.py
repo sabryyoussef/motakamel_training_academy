@@ -20,11 +20,11 @@
 
 {
     'name': 'Edafa Website Portal',
-    'version': '18.0.1.1',
+    'version': '18.0.1.2',
     'license': 'LGPL-3',
     'category': 'Website',
     'sequence': 1,
-    'summary': 'Edafa website branding and student admission portal',
+    'summary': 'Edafa website branding and student admission portal with multi-step wizard',
     'complexity': "easy",
     'author': 'Edafa Inc',
     'website': 'https://www.edafa.org',
@@ -40,6 +40,7 @@
         'data/website_data.xml',
         'data/website_menu.xml',
         'views/admission_portal_templates.xml',
+        'views/admission_wizard_templates.xml',
         'views/admission_thank_you_template.xml',
         'views/my_applications_template.xml',
     ],
@@ -48,7 +49,9 @@
         # Frontend assets (loaded on website/portal pages)
         'web.assets_frontend': [
             'edafa_website_branding/static/src/css/admission_portal.css',
+            'edafa_website_branding/static/src/css/wizard.css',
             'edafa_website_branding/static/src/js/admission_form.js',
+            'edafa_website_branding/static/src/js/application_wizard.js',
         ],
     },
     'images': [

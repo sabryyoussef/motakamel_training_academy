@@ -5,7 +5,7 @@
         <!-- Admission Menu in Website Header -->
         <record id="website_menu_admission" model="website.menu">
             <field name="name">Apply Now</field>
-            <field name="url">/admission/apply</field>
+            <field name="url">/admission/wizard</field>
             <field name="parent_id" ref="website.main_menu"/>
             <field name="sequence">50</field>
         </record>
