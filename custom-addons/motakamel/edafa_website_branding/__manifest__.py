@@ -34,11 +34,14 @@
         'portal',
         'openeducat_core',
         'openeducat_admission',
+        'payment',  # For payment.transaction integration
+        'account',  # For account.move (invoices)
     ],
     'data': [
         'security/ir.model.access.csv',
         'data/website_data.xml',
         'data/website_menu.xml',
+        'data/payment_data.xml',
         'views/admission_portal_templates.xml',
         'views/admission_wizard_templates.xml',
         'views/admission_thank_you_template.xml',
