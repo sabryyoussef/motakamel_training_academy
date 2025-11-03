@@ -217,6 +217,19 @@
                                     
                                     <div class="row">
                                         <div class="col-md-6 mb-3">
+                                            <label for="program_id">Program</label>
+                                            <select name="program_id" id="program_id" class="form-control">
+                                                <option value="">Select Program (Optional)...</option>
+                                                <t t-foreach="programs" t-as="program">
+                                                    <option t-att-value="program.id" t-att-selected="'selected' if default.get('program_id') == str(program.id) else None">
+                                                        <t t-esc="program.name"/>
+                                                    </option>
+                                                </t>
+                                            </select>
+                                            <small class="form-text text-muted">Optional: Select if applying for a specific program</small>
+                                        </div>
+                                        
+                                        <div class="col-md-6 mb-3">
                                             <label for="course_id">Course</label>
                                             <select name="course_id" id="course_id" class="form-control">
                                                 <option value="">Select Course...</option>
@@ -227,7 +240,9 @@
                                                 </t>
                                             </select>
                                         </div>
-                                        
+                                    </div>
+                                    
+                                    <div class="row">
                                         <div class="col-md-6 mb-3">
                                             <label for="batch_id">Preferred Batch</label>
                                             <select name="batch_id" id="batch_id" class="form-control">
@@ -238,6 +253,58 @@
                                                     </option>
                                                 </t>
                                             </select>
+                                        </div>
+                                    </div>
+
+                                    <h3 class="mt-4 mb-3">Previous Education (Optional)</h3>
+                                    
+                                    <div class="mb-3">
+                                        <label for="prev_institute_id">Previous Institute/School</label>
+                                        <input type="text" name="prev_institute_id" id="prev_institute_id" 
+                                               class="form-control" 
+                                               t-att-value="default.get('prev_institute_id')"
+                                               placeholder="Name of your previous educational institution"/>
+                                        <small class="form-text text-muted">For transfer students or continuing education</small>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label for="prev_course_id">Previous Course/Program</label>
+                                            <input type="text" name="prev_course_id" id="prev_course_id" 
+                                                   class="form-control"
+                                                   t-att-value="default.get('prev_course_id')"
+                                                   placeholder="e.g., Grade 12, Diploma in Computer Science"/>
+                                        </div>
+                                        
+                                        <div class="col-md-6 mb-3">
+                                            <label for="prev_result">Previous Result/Grade</label>
+                                            <input type="text" name="prev_result" id="prev_result" 
+                                                   class="form-control"
+                                                   t-att-value="default.get('prev_result')"
+                                                   placeholder="e.g., 85%, GPA 3.5, A Grade"/>
+                                        </div>
+                                    </div>
+
+                                    <h3 class="mt-4 mb-3">Family Information (Optional)</h3>
+                                    
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label for="family_business">Family Occupation/Business</label>
+                                            <input type="text" name="family_business" id="family_business" 
+                                                   class="form-control"
+                                                   t-att-value="default.get('family_business')"
+                                                   placeholder="e.g., Self-employed, Teacher, Business owner"/>
+                                            <small class="form-text text-muted">For scholarship consideration</small>
+                                        </div>
+                                        
+                                        <div class="col-md-6 mb-3">
+                                            <label for="family_income">Family Annual Income (Optional)</label>
+                                            <input type="number" name="family_income" id="family_income" 
+                                                   class="form-control"
+                                                   t-att-value="default.get('family_income')"
+                                                   placeholder="Annual income in your currency"
+                                                   step="0.01" min="0"/>
+                                            <small class="form-text text-muted">For scholarship eligibility assessment</small>
                                         </div>
                                     </div>
 

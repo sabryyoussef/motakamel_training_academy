@@ -33,9 +33,10 @@ class EdafaAdmissionPortal(http.Controller):
     @http.route(['/admission', '/admission/apply'], type='http', auth="public", website=True, sitemap=True)
     def admission_form(self, **kwargs):
         """Public admission application form"""
-        # Get available courses and batches
+        # Get available courses, batches, programs
         courses = request.env['op.course'].sudo().search([])
         batches = request.env['op.batch'].sudo().search([])
+        programs = request.env['op.program'].sudo().search([])
         countries = request.env['res.country'].sudo().search([])
         titles = request.env['res.partner.title'].sudo().search([])
         
@@ -54,6 +55,11 @@ class EdafaAdmissionPortal(http.Controller):
             'street2': 'Apt 5B',
             'city': 'Cairo',
             'zip': '11511',
+            'prev_institute_id': 'Cairo Secondary School',
+            'prev_course_id': 'High School Diploma',
+            'prev_result': '85%',
+            'family_business': 'Self-employed',
+            'family_income': '50000',
         }
         
         if 'admission_error' in request.session:
@@ -64,6 +70,7 @@ class EdafaAdmissionPortal(http.Controller):
         return request.render('edafa_website_branding.admission_application_form', {
             'courses': courses,
             'batches': batches,
+            'programs': programs,
             'countries': countries,
             'titles': titles,
             'error': error,
@@ -163,12 +170,31 @@ class EdafaAdmissionPortal(http.Controller):
                 'zip': post.get('zip', ''),
                 'application_date': fields.Datetime.now(),
                 'state': 'submit',  # Auto-submit the application
+                # Previous education fields (optional)
+                'prev_institute_id': post.get('prev_institute_id', ''),
+                'prev_course_id': post.get('prev_course_id', ''),
+                'prev_result': post.get('prev_result', ''),
+                # Family information fields (optional)
+                'family_business': post.get('family_business', ''),
             }
+            
+            # Handle family income (float field)
+            if post.get('family_income') and post.get('family_income') != '':
+                try:
+                    admission_vals['family_income'] = float(post.get('family_income'))
+                except (ValueError, TypeError):
+                    pass
             
             # Only add Many2one fields if they have valid values
             if post.get('title') and post.get('title') != '':
                 try:
                     admission_vals['title'] = int(post.get('title'))
+                except (ValueError, TypeError):
+                    pass
+            
+            if post.get('program_id') and post.get('program_id') != '':
+                try:
+                    admission_vals['program_id'] = int(post.get('program_id'))
                 except (ValueError, TypeError):
                     pass
             
