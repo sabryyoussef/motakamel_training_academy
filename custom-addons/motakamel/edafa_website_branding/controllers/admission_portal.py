@@ -32,55 +32,7 @@ class EdafaAdmissionPortal(http.Controller):
 
     @http.route(['/admission', '/admission/apply'], type='http', auth="public", website=True, sitemap=True)
     def admission_form(self, **kwargs):
-        """Public admission application form"""
-        # Get available courses, batches, programs
-        courses = request.env['op.course'].sudo().search([])
-        batches = request.env['op.batch'].sudo().search([])
-        programs = request.env['op.program'].sudo().search([])
-        countries = request.env['res.country'].sudo().search([])
-        titles = request.env['res.partner.title'].sudo().search([])
-        
-        # Get error messages if redirected after validation error
-        error = {}
-        default = {
-            'first_name': 'Ahmed',
-            'middle_name': 'Hassan',
-            'last_name': 'Mohamed',
-            'email': 'ahmed.hassan@example.com',
-            'birth_date': '2000-01-15',
-            'mobile': '+966 59 921 4084',
-            'phone': '+966 59 921 4084',
-            'gender': 'm',  # Default gender for demo
-            'street': '123 Tahrir Street',
-            'street2': 'Apt 5B',
-            'city': 'Cairo',
-            'zip': '11511',
-            'prev_institute_id': 'Cairo Secondary School',
-            'prev_course_id': 'High School Diploma',
-            'prev_result': '85%',
-            'family_business': 'Self-employed',
-            'family_income': '50000',
-        }
-        
-        if 'admission_error' in request.session:
-            error = request.session.pop('admission_error')
-            # Override defaults with user's submitted data
-            default.update(request.session.pop('admission_default'))
-        
-        return request.render('edafa_website_branding.admission_application_form', {
-            'courses': courses,
-            'batches': batches,
-            'programs': programs,
-            'countries': countries,
-            'titles': titles,
-            'error': error,
-            'default': default,
-            'page_name': 'admission',
-        })
-
-    @http.route(['/admission/wizard'], type='http', auth="public", website=True, sitemap=True)
-    def admission_wizard(self, **kwargs):
-        """Multi-step wizard application form (Phase 1 Enhancement)"""
+        """Public admission application form - Now uses multi-step wizard (Phase 1)"""
         # Get available courses, batches, programs
         courses = request.env['op.course'].sudo().search([])
         batches = request.env['op.batch'].sudo().search([])
@@ -109,6 +61,7 @@ class EdafaAdmissionPortal(http.Controller):
             'family_income': '50000',
         }
         
+        # Use wizard template instead of old form
         return request.render('edafa_website_branding.admission_application_wizard', {
             'courses': courses,
             'batches': batches,
@@ -117,6 +70,52 @@ class EdafaAdmissionPortal(http.Controller):
             'titles': titles,
             'default': default,
             'page_name': 'admission_wizard',
+        })
+
+    @http.route(['/admission/apply/classic'], type='http', auth="public", website=True)
+    def admission_form_classic(self, **kwargs):
+        """Original single-page form (kept for compatibility)"""
+        # Get available courses, batches, programs
+        courses = request.env['op.course'].sudo().search([])
+        batches = request.env['op.batch'].sudo().search([])
+        programs = request.env['op.program'].sudo().search([])
+        countries = request.env['res.country'].sudo().search([])
+        titles = request.env['res.partner.title'].sudo().search([])
+        
+        error = {}
+        default = {
+            'first_name': 'Ahmed',
+            'middle_name': 'Hassan',
+            'last_name': 'Mohamed',
+            'email': 'ahmed.hassan@example.com',
+            'birth_date': '2000-01-15',
+            'mobile': '+966 59 921 4084',
+            'phone': '+966 59 921 4084',
+            'gender': 'm',
+            'street': '123 Tahrir Street',
+            'street2': 'Apt 5B',
+            'city': 'Cairo',
+            'zip': '11511',
+            'prev_institute_id': 'Cairo Secondary School',
+            'prev_course_id': 'High School Diploma',
+            'prev_result': '85%',
+            'family_business': 'Self-employed',
+            'family_income': '50000',
+        }
+        
+        if 'admission_error' in request.session:
+            error = request.session.pop('admission_error')
+            default.update(request.session.pop('admission_default'))
+        
+        return request.render('edafa_website_branding.admission_application_form', {
+            'courses': courses,
+            'batches': batches,
+            'programs': programs,
+            'countries': countries,
+            'titles': titles,
+            'error': error,
+            'default': default,
+            'page_name': 'admission',
         })
 
     @http.route('/admission/submit', type='http', auth="public", website=True, methods=['POST'], csrf=True)

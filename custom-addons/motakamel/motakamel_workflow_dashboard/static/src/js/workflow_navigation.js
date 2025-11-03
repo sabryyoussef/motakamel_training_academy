@@ -168,7 +168,7 @@ export class WorkflowNavigation extends Component {
                 domain: [['state', '=', 'draft']],
                 context: { default_state: 'draft' },
                 target: 'current'
-            },
+        },
             'Registration': {
                 type: 'ir.actions.act_window',
                 name: 'Student Registration',
@@ -176,7 +176,7 @@ export class WorkflowNavigation extends Component {
                 views: [[false, 'list'], [false, 'form']],
                 context: { default_active: true },
                 target: 'current'
-            },
+        },
             'Enrollment': {
                 type: 'ir.actions.act_window',
                 name: 'Student Enrollment',

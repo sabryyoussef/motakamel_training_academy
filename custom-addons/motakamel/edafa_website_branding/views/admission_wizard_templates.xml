@@ -4,6 +4,130 @@
     <!-- Multi-Step Admission Wizard Template -->
     <template id="admission_application_wizard" name="Admission Application Wizard">
         <t t-call="website.layout">
+            <!-- Inline script for wizard initialization -->
+            <script type="text/javascript">
+                // Simple wizard controller that works without module loading issues
+                document.addEventListener('DOMContentLoaded', function() {
+                    const wizard = {
+                        currentStep: 1,
+                        totalSteps: 5,
+                        
+                        showStep: function(stepNum) {
+                            // Hide all steps
+                            document.querySelectorAll('.wizard-step').forEach(step => {
+                                step.classList.remove('active');
+                            });
+                            
+                            // Show current step
+                            const currentStepEl = document.querySelector('.wizard-step[data-step="' + stepNum + '"]');
+                            if (currentStepEl) {
+                                currentStepEl.classList.add('active');
+                            }
+                            
+                            // Update progress indicators
+                            document.querySelectorAll('.step').forEach((step, index) => {
+                                step.classList.remove('active', 'completed');
+                                if (index + 1 &lt; stepNum) {
+                                    step.classList.add('completed');
+                                } else if (index + 1 === stepNum) {
+                                    step.classList.add('active');
+                                }
+                            });
+                            
+                            // Update progress bar
+                            const progress = (stepNum / this.totalSteps) * 100;
+                            document.querySelector('.progress-fill').style.width = progress + '%';
+                            
+                            // Update buttons
+                            document.querySelector('.btn-wizard-prev').style.display = stepNum > 1 ? 'inline-block' : 'none';
+                            document.querySelector('.btn-wizard-next').style.display = stepNum &lt; this.totalSteps ? 'inline-block' : 'none';
+                            document.querySelector('.btn-wizard-submit').style.display = stepNum === this.totalSteps ? 'inline-block' : 'none';
+                            
+                            this.currentStep = stepNum;
+                            window.scrollTo({ top: 0, behavior: 'smooth' });
+                        },
+                        
+                        next: function() {
+                            if (this.validateStep(this.currentStep)) {
+                                if (this.currentStep === 4) {
+                                    this.populateReview();
+                                }
+                                this.showStep(this.currentStep + 1);
+                            }
+                        },
+                        
+                        previous: function() {
+                            this.showStep(this.currentStep - 1);
+                        },
+                        
+                        validateStep: function(stepNum) {
+                            const stepEl = document.querySelector('.wizard-step[data-step="' + stepNum + '"]');
+                            const requiredFields = stepEl.querySelectorAll('[required]');
+                            let isValid = true;
+                            
+                            requiredFields.forEach(field => {
+                                if (!field.value) {
+                                    field.classList.add('is-invalid');
+                                    isValid = false;
+                                } else {
+                                    field.classList.remove('is-invalid');
+                                    field.classList.add('is-valid');
+                                }
+                            });
+                            
+                            return isValid;
+                        },
+                        
+                        populateReview: function() {
+                            // Simple review population
+                            const getName = (id) => document.getElementById(id)?.value || 'Not provided';
+                            const getSelect = (id) => {
+                                const el = document.getElementById(id);
+                                return el?.options[el.selectedIndex]?.text || 'Not provided';
+                            };
+                            
+                            document.getElementById('review-full-name').textContent = 
+                                getName('first_name') + ' ' + getName('middle_name') + ' ' + getName('last_name');
+                            document.getElementById('review-email').textContent = getName('email');
+                            document.getElementById('review-mobile').textContent = getName('mobile');
+                            document.getElementById('review-birth-date').textContent = getName('birth_date');
+                            document.getElementById('review-gender').textContent = getSelect('gender');
+                            document.getElementById('review-street').textContent = getName('street');
+                            document.getElementById('review-city').textContent = getName('city');
+                            document.getElementById('review-country').textContent = getSelect('country_id');
+                            document.getElementById('review-program').textContent = getSelect('program_id');
+                            document.getElementById('review-course').textContent = getSelect('course_id');
+                            document.getElementById('review-batch').textContent = getSelect('batch_id');
+                            document.getElementById('review-prev-institute').textContent = getName('prev_institute_id');
+                            document.getElementById('review-prev-course').textContent = getName('prev_course_id');
+                            document.getElementById('review-family-business').textContent = getName('family_business');
+                        }
+                    };
+                    
+                    // Attach event listeners
+                    document.querySelector('.btn-wizard-next')?.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        wizard.next();
+                    });
+                    
+                    document.querySelector('.btn-wizard-prev')?.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        wizard.previous();
+                    });
+                    
+                    document.querySelectorAll('.review-edit-btn').forEach(btn => {
+                        btn.addEventListener('click', function(e) {
+                            e.preventDefault();
+                            const step = parseInt(this.getAttribute('data-step'));
+                            wizard.showStep(step);
+                        });
+                    });
+                    
+                    // Initialize
+                    wizard.showStep(1);
+                });
+            </script>
+            
             <div id="wrap" class="oe_structure">
                 <section class="s_cover parallax s_parallax_is_fixed pt96 pb96" data-snippet="s_cover">
                     <span class="s_parallax_bg oe_img_bg" style="background-image: url('/web/image/website.s_cover_default'); background-position: 50% 0;"></span>
@@ -23,7 +147,7 @@
                                     <!-- Progress Indicator -->
                                     <div class="wizard-progress">
                                         <div class="progress-steps">
-                                            <div class="step" data-step="1">
+                                            <div class="step active" data-step="1">
                                                 <div class="step-icon">1</div>
                                                 <div class="step-label">Personal</div>
                                             </div>
@@ -56,7 +180,7 @@
                                         <div class="wizard-content">
                                             
                                             <!-- Step 1: Personal Information -->
-                                            <div class="wizard-step" data-step="1">
+                                            <div class="wizard-step active" data-step="1">
                                                 <div class="step-validation-summary"></div>
                                                 
                                                 <div class="step-header">
@@ -433,19 +557,23 @@
 
                                             <!-- Navigation Buttons -->
                                             <div class="wizard-navigation">
-                                                <button type="button" class="btn btn-wizard btn-wizard-prev" style="display: none;">
-                                                    <i class="fa fa-arrow-left"></i> Previous
-                                                </button>
+                                                <div>
+                                                    <button type="button" class="btn btn-wizard btn-wizard-prev" style="display: none;">
+                                                        <i class="fa fa-arrow-left"></i> Previous
+                                                    </button>
+                                                </div>
                                                 
                                                 <div class="autosave-indicator"></div>
                                                 
-                                                <button type="button" class="btn btn-wizard btn-wizard-next">
-                                                    Next <i class="fa fa-arrow-right"></i>
-                                                </button>
-                                                
-                                                <button type="submit" class="btn btn-wizard btn-wizard-submit" style="display: none;">
-                                                    <i class="fa fa-paper-plane"></i> Submit Application
-                                                </button>
+                                                <div>
+                                                    <button type="button" class="btn btn-wizard btn-wizard-next">
+                                                        Next <i class="fa fa-arrow-right"></i>
+                                                    </button>
+                                                    
+                                                    <button type="submit" class="btn btn-wizard btn-wizard-submit" style="display: none;">
+                                                        <i class="fa fa-paper-plane"></i> Submit Application
+                                                    </button>
+                                                </div>
                                             </div>
                                         </div>
                                     </form>
