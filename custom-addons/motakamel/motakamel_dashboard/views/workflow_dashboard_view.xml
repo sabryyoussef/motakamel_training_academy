@@ -355,7 +355,7 @@
                                                 <div class="workflow_stage_card_header">
                                                     <div class="workflow_stage_card_icon_container">
                                                         <div class="workflow_stage_card_icon">
-                                                            <i class="fa fa-circle" style="color: white; font-size: 18px;"/>
+                                                            <i class="fa fa-circle" style="color: white; font-size: 18px;" title="Stage color indicator" aria-label="Stage color indicator"/>
                                                         </div>
                                                     </div>
                                                     <div class="workflow_stage_card_title_section">

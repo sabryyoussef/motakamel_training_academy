@@ -94,7 +94,7 @@ class MotakamelWorkflowAnalytics(models.Model):
             'type': 'ir.actions.act_window',
             'name': f'{self.stage_id.name} Records',
             'res_model': 'op.student' if hasattr(self.env, 'op.student') else 'res.partner',
-            'view_mode': 'tree,form',
+            'view_mode': 'list,form',
             'target': 'current',
         }
 

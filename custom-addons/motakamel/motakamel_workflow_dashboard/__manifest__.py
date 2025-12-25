@@ -58,11 +58,6 @@
         'wizards/workflow_wizard_view.xml',
     ],
     'demo': [],
-    'css': [],
-    'qweb': [
-        'static/src/xml/workflow_templates.xml',
-    ],
-    'js': [],
     'images': [
         'static/description/icon.png',
     ],
@@ -73,6 +68,7 @@
         'web.assets_backend': [
             'motakamel_workflow_dashboard/static/src/js/workflow_diagram_widget.js',
             'motakamel_workflow_dashboard/static/src/js/workflow_navigation.js',
+            'motakamel_workflow_dashboard/static/src/xml/workflow_templates.xml',
             'motakamel_workflow_dashboard/static/src/scss/workflow_dashboard.scss',
         ],
     },

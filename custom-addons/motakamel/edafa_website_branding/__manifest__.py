@@ -19,26 +19,46 @@
 ###############################################################################
 
 {
-    'name': 'Edafa Website Branding',
-    'version': '18.0.1.0',
+    'name': 'Edafa Website Portal',
+    'version': '18.0.1.2',
     'license': 'LGPL-3',
     'category': 'Website',
     'sequence': 1,
-    'summary': 'Edafa branding for website logo and favicon',
+    'summary': 'Edafa website branding and student admission portal with multi-step wizard',
     'complexity': "easy",
     'author': 'Edafa Inc',
     'website': 'https://www.edafa.org',
     'depends': [
         'base',
         'website',
+        'portal',
+        'openeducat_core',
+        'openeducat_admission',
+        'payment',  # For payment.transaction integration
+        'account',  # For account.move (invoices)
     ],
     'data': [
+        'security/ir.model.access.csv',
         'data/website_data.xml',
+        'data/website_menu.xml',
+        'data/payment_data.xml',
+        'views/admission_portal_templates.xml',
+        'views/admission_wizard_templates.xml',
+        'views/admission_thank_you_template.xml',
+        'views/my_applications_template.xml',
     ],
-    'demo': [],
-    'css': [],
-    'qweb': [],
-    'js': [],
+    'demo': [
+        'data/demo_data.xml',
+    ],
+    'assets': {
+        # Frontend assets (loaded on website/portal pages)
+        'web.assets_frontend': [
+            'edafa_website_branding/static/src/css/admission_portal.css',
+            'edafa_website_branding/static/src/css/wizard.css',
+            'edafa_website_branding/static/src/js/admission_form.js',
+            'edafa_website_branding/static/src/js/application_wizard.js',
+        ],
+    },
     'images': [
         'static/description/icon.png',
     ],

@@ -61,14 +61,14 @@ class MotakamelWorkflow(models.Model):
         """Open the workflow-specific dashboard"""
         self.ensure_one()
         return {
-            'type': 'ir.actions.act_window',
+            'type': 'ir.actions.client',
+            'tag': 'motakamel_workflow_navigation',
             'name': f'{self.name} Dashboard',
-            'res_model': 'motakamel.workflow',
-            'res_id': self.id,
-            'view_mode': 'form',
-            'view_id': self.env.ref('motakamel_workflow_dashboard.view_workflow_dashboard_form').id,
+            'context': {
+                'workflow_id': self.id,
+                'workflow_name': self.name,
+            },
             'target': 'current',
-            'context': {'workflow_id': self.id},
         }
 
     def action_view_stages(self):
@@ -78,7 +78,7 @@ class MotakamelWorkflow(models.Model):
             'type': 'ir.actions.act_window',
             'name': f'{self.name} - Stages',
             'res_model': 'motakamel.workflow.stage',
-            'view_mode': 'kanban,tree,form',
+            'view_mode': 'kanban,list,form',
             'domain': [('workflow_id', '=', self.id)],
             'context': {'default_workflow_id': self.id},
         }
@@ -90,7 +90,7 @@ class MotakamelWorkflow(models.Model):
             'type': 'ir.actions.act_window',
             'name': f'{self.name} - Analytics',
             'res_model': 'motakamel.workflow.analytics',
-            'view_mode': 'tree,form',
+            'view_mode': 'list,form',
             'domain': [('workflow_id', '=', self.id)],
             'context': {'default_workflow_id': self.id},
         }

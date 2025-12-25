@@ -2,11 +2,175 @@
 <templates>
     
     <!-- Workflow Navigation Template -->
-    <t t-name="motakamel_workflow_dashboard.WorkflowNavigation">
+    <t t-name="motakamel_workflow_dashboard.WorkflowNavigation" owl="1">
         <div class="o_workflow_navigation">
-            <div class="o_breadcrumb"></div>
-            <div class="o_quick_actions"></div>
-            <div class="o_progress_tracking"></div>
+            <div class="container-fluid mt-3">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="o_workflow_card">
+                            <div class="o_workflow_card_header">
+                                <h2 class="o_workflow_card_title">
+                                    <i class="fa fa-sitemap me-2"></i>
+                                    <t t-esc="workflowName"/> Dashboard
+                                </h2>
+                            </div>
+                            <div class="o_workflow_card_content">
+                                <div class="o_quick_actions mb-4">
+                                    <h4 class="mb-3">Quick Actions</h4>
+                                    <div class="btn-group" role="group">
+                                        <button class="btn btn-primary" t-on-click="viewStages">
+                                            <i class="fa fa-list me-1"></i> View Stages
+                                        </button>
+                                        <button class="btn btn-info" t-on-click="viewAnalytics">
+                                            <i class="fa fa-chart-bar me-1"></i> View Analytics
+                                        </button>
+                                        <button class="btn btn-secondary" t-on-click="viewTransitions">
+                                            <i class="fa fa-exchange me-1"></i> View Transitions
+                                        </button>
+                                        <button class="btn btn-warning" t-on-click="editWorkflow">
+                                            <i class="fa fa-edit me-1"></i> Edit Workflow
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="alert alert-info">
+                                    <i class="fa fa-info-circle me-2"></i>
+                                    <strong>Welcome to the Workflow Dashboard!</strong>
+                                    <p class="mb-0 mt-2">
+                                        Use the quick actions above to manage workflow stages, view analytics, 
+                                        configure transitions, or edit workflow settings.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Workflow Stages Section -->
+                <div class="row mt-4">
+                    <div class="col-12">
+                        <div class="o_workflow_card">
+                            <div class="o_workflow_card_header">
+                                <h3 class="o_workflow_card_title">
+                                    <i class="fa fa-layer-group me-2"></i>
+                                    Workflow Stages
+                                </h3>
+                            </div>
+                            <div class="o_workflow_card_content">
+                                <t t-if="state.loading">
+                                    <div class="text-center py-5">
+                                        <i class="fa fa-spinner fa-spin fa-3x text-primary"></i>
+                                        <p class="mt-3 text-muted">Loading stages...</p>
+                                    </div>
+                                </t>
+                                <t t-else="">
+                                    <t t-if="state.stages.length === 0">
+                                        <div class="alert alert-warning">
+                                            <i class="fa fa-exclamation-triangle me-2"></i>
+                                            No stages found for this workflow.
+                                        </div>
+                                    </t>
+                                    <t t-else="">
+                                        <!-- First Row: Inquiry and Admission (Cards 1 & 2) -->
+                                        <div class="row g-3 mb-3">
+                                            <t t-foreach="state.stages" t-as="stage" t-key="stage.id">
+                                                <t t-if="(stage_index + 1) &lt;= 2">
+                                                    <div class="col-md-6">
+                                                    <!-- Special card for Inquiry stage with 2 buttons -->
+                                                    <t t-if="stage.name === 'Inquiry'">
+                                                        <div class="workflow_stage_card admission_card" 
+                                                             t-attf-style="border-left: 4px solid {{stage.color}};">
+                                                            <div class="stage_header">
+                                                                <div class="stage_number" t-attf-style="background: {{stage.color}};">
+                                                                    <t t-esc="stage_index + 1"/>
+                                                                </div>
+                                                                <h5 class="stage_name" t-esc="stage.name"/>
+                                                            </div>
+                                                            <p class="stage_description" t-esc="stage.description"/>
+                                                            
+                                                            <!-- Two action buttons for Inquiry -->
+                                                            <div class="stage_actions_container">
+                                                                <button class="btn btn-admission-action" 
+                                                                        t-on-click="openAdmissionApplications"
+                                                                        t-attf-style="border-color: {{stage.color}}; color: {{stage.color}};">
+                                                                    <i class="fa fa-file-text me-2"></i>
+                                                                    <span>Applications</span>
+                                                                </button>
+                                                                <button class="btn btn-admission-action" 
+                                                                        t-on-click="openAdmissionReport"
+                                                                        t-attf-style="border-color: {{stage.color}}; color: {{stage.color}};">
+                                                                    <i class="fa fa-chart-bar me-2"></i>
+                                                                    <span>Report</span>
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </t>
+                                                    
+                                                    <!-- Special card for Admission stage with 2 buttons (Registers + Report) -->
+                                                    <t t-elif="stage.name === 'Admission'">
+                                                        <div class="workflow_stage_card admission_card" 
+                                                             t-attf-style="border-left: 4px solid {{stage.color}};">
+                                                            <div class="stage_header">
+                                                                <div class="stage_number" t-attf-style="background: {{stage.color}};">
+                                                                    <t t-esc="stage_index + 1"/>
+                                                                </div>
+                                                                <h5 class="stage_name" t-esc="stage.name"/>
+                                                            </div>
+                                                            <p class="stage_description" t-esc="stage.description"/>
+                                                            
+                                                            <!-- Two action buttons for Admission -->
+                                                            <div class="stage_actions_container">
+                                                                <button class="btn btn-admission-action" 
+                                                                        t-on-click="openAdmissionRegisters"
+                                                                        t-attf-style="border-color: {{stage.color}}; color: {{stage.color}};">
+                                                                    <i class="fa fa-book me-2"></i>
+                                                                    <span>Registers</span>
+                                                                </button>
+                                                                <button class="btn btn-admission-action" 
+                                                                        t-on-click="openAdmissionReport"
+                                                                        t-attf-style="border-color: {{stage.color}}; color: {{stage.color}};">
+                                                                    <i class="fa fa-chart-bar me-2"></i>
+                                                                    <span>Report</span>
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </t>
+                                                    
+                                                    </div>
+                                                </t>
+                                            </t>
+                                        </div>
+                                        
+                                        <!-- Second Row: Registration and Enrollment (Cards 3 & 4) -->
+                                        <div class="row g-3">
+                                            <t t-foreach="state.stages" t-as="stage" t-key="stage.id">
+                                                <t t-if="(stage_index + 1) &gt;= 3 and (stage_index + 1) &lt;= 4">
+                                                    <div class="col-md-6">
+                                                        <div class="workflow_stage_card clickable" 
+                                                             t-attf-style="border-left: 4px solid {{stage.color}}; cursor: pointer;"
+                                                             t-on-click="() => this.openStage(stage)">
+                                                            <div class="stage_header">
+                                                                <div class="stage_number" t-attf-style="background: {{stage.color}};">
+                                                                    <t t-esc="stage_index + 1"/>
+                                                                </div>
+                                                                <h5 class="stage_name" t-esc="stage.name"/>
+                                                            </div>
+                                                            <p class="stage_description" t-esc="stage.description"/>
+                                                            <div class="stage_action_hint">
+                                                                <i class="fa fa-arrow-right me-2"></i>
+                                                                <span>Click to open</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </t>
+                                            </t>
+                                        </div>
+                                    </t>
+                                </t>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </t>
     

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data noupdate="1">
-        
+
         <!-- Student Lifecycle Workflow -->
         <record id="workflow_student_lifecycle" model="motakamel.workflow">
             <field name="name">Student Lifecycle</field>
@@ -81,7 +81,7 @@
             <field name="workflow_id" ref="workflow_student_lifecycle"/>
             <field name="from_stage_id" ref="stage_admission"/>
             <field name="to_stage_id" ref="stage_registration"/>
-            <field name="button_label">Approve & Register</field>
+            <field name="button_label">Approve &amp; Register</field>
             <field name="sequence">20</field>
         </record>
 
